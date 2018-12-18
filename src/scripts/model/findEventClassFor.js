@@ -11,7 +11,7 @@ const classes = {
   transfer: TransferEvent,
   acquisition: AcquisitionEvent,
   merger: MergerEvent,
-  spinoff: SpinoffEvent
+  spinoff: SpinoffEvent,
 };
 
 export default function findEventClassFor(type) {

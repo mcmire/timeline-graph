@@ -7,10 +7,10 @@ export default function tagTokensIn(text, args) {
 
   let match;
   const matches = [];
-  while (match = regexp.exec(text)) {
+  while ((match = regexp.exec(text))) {
     matches.push({
       startIndex: match.index,
-      endIndex: regexp.lastIndex
+      endIndex: regexp.lastIndex,
     });
   }
 
@@ -18,35 +18,35 @@ export default function tagTokensIn(text, args) {
     const pieces = [
       {
         type: "normal",
-        text: text.slice(0, matches[0].startIndex)
-      }
+        text: text.slice(0, matches[0].startIndex),
+      },
     ];
 
     for (let i = 0; i < matches.length; i++) {
-      const regexp = new RegExp(`${tokenWrapper}(.+?)${tokenWrapper}`);
-      const match = matches[i];
+      const regexp2 = new RegExp(`${tokenWrapper}(.+?)${tokenWrapper}`);
+      const match2 = matches[i];
       const nextMatch = matches[i + 1];
 
-      const a = match.startIndex;
-      const b = match.endIndex;
+      const a = match2.startIndex;
+      const b = match2.endIndex;
       const c = nextMatch == null ? null : nextMatch.startIndex;
 
       pieces.push({
         type: tokenType,
-        text: text.slice(a, b).replace(regexp, (_, $1) => $1)
+        text: text.slice(a, b).replace(regexp2, (_, $1) => $1),
       });
 
       if (c != null) {
         pieces.push({
           type: "normal",
-          text: text.slice(b, c)
+          text: text.slice(b, c),
         });
       }
     }
 
     pieces.push({
       type: "normal",
-      text: text.slice(matches[matches.length - 1].endIndex)
+      text: text.slice(matches[matches.length - 1].endIndex),
     });
 
     return pieces.filter(piece => !_.isEmpty(piece.text));

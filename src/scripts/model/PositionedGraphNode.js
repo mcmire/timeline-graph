@@ -19,7 +19,7 @@ export default class PositionedGraphNode extends MeasuredGraphNode {
       mapToX: this._mapToX,
       mapToY: this._mapToY,
       x: x,
-      y: y
+      y: y,
     });
   }
 

@@ -4,12 +4,14 @@ import dom from "../dom";
 import TokenLine from "./TokenLine";
 
 export default function splitTokensIntoLines(tokens, containingWidth) {
-  document.querySelectorAll("*[data-dummy]").forEach(element => element.remove());
+  document.querySelectorAll("*[data-dummy]").forEach(element => {
+    return element.remove();
+  });
   const dummySvg = dom.elementWithNS("svg", "svg", {
     data: { dummy: true },
     children: [
-      dom.elementWithNS("svg", "text", { data: { dummy: true }})
-    ]
+      dom.elementWithNS("svg", "text", { data: { dummy: true }}),
+    ],
   });
   document.body.appendChild(dummySvg);
   const dummyTextElement = dummySvg.querySelector("text");
@@ -17,9 +19,7 @@ export default function splitTokensIntoLines(tokens, containingWidth) {
   const tokensWithWords = tokens.map(token => {
     return { type: token.type, words: token.text.split(/(\s+)/) };
   });
-  let maxWidth = 0;
   let currentTokenLine = new TokenLine(dummyTextElement);
-  let currentWord;
   const tokenLines = [];
 
   tokensWithWords.forEach(token => {
@@ -45,12 +45,12 @@ export default function splitTokensIntoLines(tokens, containingWidth) {
       if (newTokenLine.length > 0 && newTokenLine.last.type === token.type) {
         return newTokenLine.withUpdatedLastToken({
           type: token.type,
-          text: newTokenLine.last.text + token.text
+          text: newTokenLine.last.text + token.text,
         });
       } else {
         return newTokenLine.add({
           type: token.type,
-          text: token.text
+          text: token.text,
         });
       }
     }, new TokenLine(dummyTextElement));
@@ -58,10 +58,12 @@ export default function splitTokensIntoLines(tokens, containingWidth) {
 
   const calculatedWidth = d3.max(_.map(normalizedTokenLines, "width"));
 
-  document.querySelectorAll("*[data-dummy]").forEach(element => element.remove());
+  document.querySelectorAll("*[data-dummy]").forEach(element => {
+    return element.remove();
+  });
 
   return {
     lines: normalizedTokenLines,
-    width: calculatedWidth
+    width: calculatedWidth,
   };
 }

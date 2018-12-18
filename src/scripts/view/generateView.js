@@ -31,21 +31,24 @@ export default function generateView(model) {
     .range([margin.left, maxX]);
 
   const sortedMeasuredNodes = _.sortBy(measuredNodes, "index");
-  const realYsByNodeIndex = sortedMeasuredNodes.reduce((realYsByNodeIndex, node) => {
-    let y;
+  const realYsByNodeIndex = sortedMeasuredNodes.reduce(
+    (object, node) => {
+      let y;
 
-    if (node.index > 0) {
-      y = (
-        realYsByNodeIndex[node.index - 1] +
-        sortedMeasuredNodes[node.index - 1].height +
-        verticalSpacing
-      );
-    } else {
-      y = margin.top;
-    }
+      if (node.index > 0) {
+        y = (
+          object[node.index - 1] +
+          sortedMeasuredNodes[node.index - 1].height +
+          verticalSpacing
+        );
+      } else {
+        y = margin.top;
+      }
 
-    return { ...realYsByNodeIndex, [node.index]: y };
-  }, {});
+      return { ...object, [node.index]: y };
+    },
+    {},
+  );
 
   const y2OfLastNode =
     d3.max(Object.values(realYsByNodeIndex)) +
@@ -64,12 +67,15 @@ export default function generateView(model) {
         mapToY,
         parents: node.parents.map(parent => {
           return results.positionedNodesById[parent.id];
-        })
+        }),
       });
 
       return {
         positionedNodes: results.positionedNodes.concat([positionedNode]),
-        positionedNodesById: { ...results.positionedNodesById, [node.id]: positionedNode }
+        positionedNodesById: {
+          ...results.positionedNodesById,
+          [node.id]: positionedNode,
+        },
       };
     },
     { positionedNodes: [], positionedNodesById: {} }
@@ -80,6 +86,6 @@ export default function generateView(model) {
     height: viewHeight,
     mapToX: mapToX,
     mapToY: mapToY,
-    nodes: positionedNodes
+    nodes: positionedNodes,
   };
 }

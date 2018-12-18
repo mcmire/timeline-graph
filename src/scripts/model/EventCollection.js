@@ -32,7 +32,7 @@ export default class EventCollection {
 
   cloneWith({
     events = _.clone(this[eventsSymbol]),
-    lastId = this[lastIdSymbol]
+    lastId = this[lastIdSymbol],
   }) {
     return new this.constructor({ events, lastId });
   }
@@ -50,11 +50,11 @@ export default class EventCollection {
       const newId = this[lastIdSymbol] + 1;
       const newEvent = buildEvent({
         ...eventAttributes,
-        id: newId
+        id: newId,
       });
       return this.cloneWith({
-        events: [ ...this[eventsSymbol], newEvent ],
-        lastId: newId
+        events: [...this[eventsSymbol], newEvent],
+        lastId: newId,
       });
     } else {
       return this;

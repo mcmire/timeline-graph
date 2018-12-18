@@ -24,7 +24,7 @@ class CompanyCollection {
 
   cloneWith({
     entries = _.clone(this[entriesSymbol]),
-    lastId = this[lastIdSymbol]
+    lastId = this[lastIdSymbol],
   }) {
     return new this.constructor({ entries, lastId });
   }
@@ -42,26 +42,28 @@ class CompanyCollection {
   }
 
   merge(companyCollection) {
-    companyCollection = this.constructor.wrap(companyCollection);
+    const newCompanyCollection = this.constructor.wrap(companyCollection);
 
     return _.reduce(
-      companyCollection[entriesSymbol],
+      newCompanyCollection[entriesSymbol],
       (newCompanies, company) => newCompanies.add(company),
       this.clone()
     );
   }
 
   find(...names) {
-    names = names.filter(name => name != null);
+    const definiteNames = names.filter(name => name != null);
 
-    if (names.length > 0) {
-      const possibleCompanies = names.map(name => this[entriesSymbol][name]);
+    if (definiteNames.length > 0) {
+      const possibleCompanies = definiteNames.map(name => {
+        return this[entriesSymbol][name];
+      });
       const foundCompany = possibleCompanies.find(company => company != null);
 
       if (foundCompany == null) {
         throw new Error(
           `No such company exists: ${names.join(" / ")}. ` +
-          'Maybe your events are listed in the wrong order?'
+          "Maybe your events are listed in the wrong order?"
         );
       } else {
         return foundCompany;
@@ -72,10 +74,12 @@ class CompanyCollection {
   }
 
   findOrCreate(...names) {
-    names = names.filter(name => name != null);
+    const definiteNames = names.filter(name => name != null);
 
-    if (names.length > 0) {
-      const possibleCompanies = names.map(name => this[entriesSymbol][name]);
+    if (definiteNames.length > 0) {
+      const possibleCompanies = definiteNames.map(name => {
+        return this[entriesSymbol][name];
+      });
       const foundCompany = possibleCompanies.find(company => company != null);
 
       if (foundCompany == null) {
@@ -84,14 +88,14 @@ class CompanyCollection {
         const newCompany = new Company({
           id: newId,
           name: names[0],
-          aliases: names.slice(1)
+          aliases: names.slice(1),
         });
         const newEntries = names.reduce((entries, name) => {
           return { ...entries, [name]: newCompany };
         }, _.clone(this[entriesSymbol]));
         const newCompanies = this.cloneWith({
           entries: newEntries,
-          lastId: newId
+          lastId: newId,
         });
         return [newCompanies, newCompany];
       } else {
@@ -120,6 +124,6 @@ CompanyCollection.wrap = function (value) {
   } else {
     return new this({ entries: value });
   }
-}
+};
 
 export default CompanyCollection;

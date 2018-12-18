@@ -21,8 +21,8 @@ export default class Event {
     this.data = data;
     this.id = id;
 
-    this.year = date.value.getFullYear()
-    this.formattedYear = this.year + (date.isFuzzy ? '(?)' : '');
+    this.year = date.value.getFullYear();
+    this.formattedYear = this.year + (date.isFuzzy ? "(?)" : "");
   }
 
   get text() {
@@ -33,7 +33,7 @@ export default class Event {
     return {
       date: this.date,
       company: this.company,
-      data: this.data
+      data: this.data,
     };
   }
 }

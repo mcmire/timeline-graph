@@ -5,6 +5,6 @@ export default function calculateBounds(node) {
     halfX: node.x + (node.width / 2),
     y1: node.y,
     y2: node.y + node.height,
-    halfY: node.y + (node.height / 2)
+    halfY: node.y + (node.height / 2),
   };
 }

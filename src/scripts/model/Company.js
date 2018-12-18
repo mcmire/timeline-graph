@@ -21,7 +21,7 @@ export default class Company {
     return {
       id: this.id,
       name: this.name,
-      aliases: this.aliases
+      aliases: this.aliases,
     };
   }
 }

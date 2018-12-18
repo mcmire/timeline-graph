@@ -5,24 +5,22 @@ export default function reindexNodes(nodes) {
     return { ...object, [node.id]: node.index };
   }, {});
 
-  // console.log("nodes", nodes);
-
-  const reindexedNodes = nodes.reduce((reindexedNodes, node) => {
-    const lastNodesByCompanyId = _.keyBy(reindexedNodes, "event.company.index");
+  const reindexedNodes = nodes.reduce((array, node) => {
+    const lastNodesByCompanyId = _.keyBy(array, "event.company.index");
 
     if (node.event.data.sources != null) {
       const sources = node.event.data.sources;
       const firstParentCompany = sources[0];
       const lastParentNode = lastNodesByCompanyId[firstParentCompany.index];
 
-      return reindexedNodes
+      return array
         .slice(0, lastParentNode.index + 1)
         .concat([
-          node.cloneWith({ index: lastParentNode.index + 1 })
+          node.cloneWith({ index: lastParentNode.index + 1 }),
         ])
         .concat(
-          reindexedNodes.slice(lastParentNode.index + 1).map(node => {
-            return node.cloneWith({ index: node.index + 1 });
+          array.slice(lastParentNode.index + 1).map(n => {
+            return n.cloneWith({ index: n.index + 1 });
           })
         );
     } else if (node.event.data.contributors != null) {
@@ -30,39 +28,34 @@ export default function reindexNodes(nodes) {
       const firstParentCompany = contributors[0];
       const lastParentNode = lastNodesByCompanyId[firstParentCompany.index];
 
-      return reindexedNodes
+      return array
         .slice(0, lastParentNode.index + 1)
         .concat([
-          node.cloneWith({ index: lastParentNode.index + 1 })
+          node.cloneWith({ index: lastParentNode.index + 1 }),
         ])
         .concat(
-          reindexedNodes.slice(lastParentNode.index + 1).map(node => {
-            return node.cloneWith({ index: node.index + 1 });
+          array.slice(lastParentNode.index + 1).map(n => {
+            return n.cloneWith({ index: n.index + 1 });
           })
         );
     } else if (node.event.data.parentCompany != null) {
       const parentCompany = node.event.data.parentCompany;
       const lastParentNode = lastNodesByCompanyId[parentCompany.index];
-      // console.log("node", node);
-      // console.log("parentCompany", parentCompany);
-      // console.log("lastParentNode", lastParentNode);
 
-      return reindexedNodes
+      return array
         .slice(0, lastParentNode.index + 1)
         .concat([
-          node.cloneWith({ index: lastParentNode.index + 1 })
+          node.cloneWith({ index: lastParentNode.index + 1 }),
         ])
         .concat(
-          reindexedNodes.slice(lastParentNode.index + 1).map(node => {
-            return node.cloneWith({ index: node.index + 1 });
+          array.slice(lastParentNode.index + 1).map(n => {
+            return n.cloneWith({ index: n.index + 1 });
           })
         );
     } else {
-      return reindexedNodes.concat([node]);
+      return array.concat([node]);
     }
   }, []);
-
-  // console.log("reindexedNodes", reindexedNodes);
 
   return _.sortBy(reindexedNodes, node => {
     return originalNodeIndicesById[node.id];

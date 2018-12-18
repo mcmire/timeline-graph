@@ -9,12 +9,12 @@ function buildEventDate(rawDate) {
   if (yearDateMatch) {
     return {
       value: new Date(`Jan 1, ${yearDateMatch[1]}`),
-      isFuzzy: (yearDateMatch[2] !== undefined)
+      isFuzzy: (yearDateMatch[2] !== undefined),
     };
   } else {
     return {
       value: new Date(rawDate),
-      isFuzzy: false
+      isFuzzy: false,
     };
   }
 }
@@ -37,7 +37,7 @@ export default function buildModel(story) {
           if (result) {
             return {
               events: model.events.add(result.event),
-              companies: model.companies.merge(result.companies)
+              companies: model.companies.merge(result.companies),
             };
           } else {
             throw `Couldn't build result from "${line}"`;
@@ -48,7 +48,7 @@ export default function buildModel(story) {
       },
       {
         events: new EventCollection(),
-        companies: new CompanyCollection()
+        companies: new CompanyCollection(),
       }
     );
 }

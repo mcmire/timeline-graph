@@ -18,7 +18,7 @@ export default function addNodeConnectionsTo(svg, view) {
               Object.create(parent),
               { bounds: calculateBounds(parent) }
             );
-          })
+          }),
         }
       );
     });
@@ -41,57 +41,65 @@ export default function addNodeConnectionsTo(svg, view) {
               points: [
                 {
                   x: parent.bounds.x2,
-                  y: parent.bounds.halfY
+                  y: parent.bounds.halfY,
                 },
                 {
                   x: maxParentXWithJut,
-                  y: parent.bounds.halfY
+                  y: parent.bounds.halfY,
                 },
                 {
                   x: maxParentXWithJut,
                   y: (
-                    parent.bounds.y1 > node.bounds.y1 ? node.bounds.y2 : node.bounds.y1
-                  )
-                }
+                    parent.bounds.y1 > node.bounds.y1 ?
+                      node.bounds.y2 :
+                      node.bounds.y1
+                  ),
+                },
               ],
               dashed: (node.event instanceof IncorporationEvent),
-              withArrowhead: (parent.bounds.y1 > node.bounds.y1 ? "up" : "down")
+              withArrowhead: (
+                parent.bounds.y1 > node.bounds.y1 ? "up" : "down"
+              ),
             });
             appendCircleTo(groupElement, {
               x: maxParentXWithJut,
-              y: parent.bounds.halfY
+              y: parent.bounds.halfY,
             });
           } else {
             appendLinesTo(groupElement, {
               points: [
                 {
                   x: parent.bounds.x2,
-                  y: parent.bounds.halfY
+                  y: parent.bounds.halfY,
                 },
                 {
                   x: node.bounds.x2 - ((node.bounds.x2 - parent.bounds.x2) / 2),
-                  y: parent.bounds.halfY
+                  y: parent.bounds.halfY,
                 },
                 {
                   x: node.bounds.x2 - ((node.bounds.x2 - parent.bounds.x2) / 2),
                   y: (
-                    parent.bounds.y1 > node.bounds.y1 ? node.bounds.y2 : node.bounds.y1
-                  )
-                }
+                    parent.bounds.y1 > node.bounds.y1 ?
+                      node.bounds.y2 :
+                      node.bounds.y1
+                  ),
+                },
               ],
               dashed: (node.event instanceof IncorporationEvent),
-              withArrowhead: (parent.bounds.y1 > node.bounds.y1 ? "up" : "down")
+              withArrowhead: (
+                parent.bounds.y1 > node.bounds.y1 ? "up" : "down"
+              ),
             });
             appendCircleTo(groupElement, {
               x: node.bounds.x2 - ((node.bounds.x2 - parent.bounds.x2) / 2),
-              y: parent.bounds.halfY
+              y: parent.bounds.halfY,
             });
           }
         } else {
           const points = [
             { x: parent.bounds.x2, y: parent.bounds.halfY },
             { x: node.bounds.x1 - jutWidth, y: parent.bounds.halfY },
-            { x: node.bounds.x1 - jutWidth, y: node.bounds.halfY }
+            { x: node.bounds.x1 - jutWidth, y: node.bounds.halfY },
           ];
           let withArrowhead = false;
 
@@ -104,7 +112,7 @@ export default function addNodeConnectionsTo(svg, view) {
 
           appendCircleTo(groupElement, {
             x: node.bounds.x1 - jutWidth,
-            y: parent.bounds.halfY
+            y: parent.bounds.halfY,
           });
         }
       });

@@ -7,6 +7,6 @@ export default function typesetText(tokens, maxWidth) {
   return {
     lines: lines,
     width: width + textBoxPadding * 2,
-    height: (height + textBoxPadding * 2) - 2
+    height: (height + textBoxPadding * 2) - 2,
   };
 }

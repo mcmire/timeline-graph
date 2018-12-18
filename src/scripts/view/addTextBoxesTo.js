@@ -8,7 +8,7 @@ export default function addTextBoxesTo(svg, view) {
     .each((node, nodeIndex, elements) => {
       const groupElement = d3.select(elements[nodeIndex]);
 
-      const rectElement = groupElement.append("rect")
+      groupElement.append("rect")
         .attr("stroke", "black")
         .attr("stroke-width", "1px")
         .attr("fill", "white")
@@ -29,7 +29,7 @@ export default function addTextBoxesTo(svg, view) {
             .text(token.text)
             .attr(
               "style",
-              `font-weight: ${token.type === 'bold' ? 'bold' : 'normal'}`
+              `font-weight: ${token.type === "bold" ? "bold" : "normal"}`
             )
             .attr("alignment-baseline", "hanging")
             .attr("x", tokenIndex === 0 ? node.x + textBoxPadding : null)

@@ -1,7 +1,7 @@
 export default function buildNodeGraph(originalNodes) {
   const lastNodesByCompanyId = {};
 
-  return originalNodes.map((node, nodeIndex) => {
+  return originalNodes.map(node => {
     const companyId = node.event.company.index;
     const data = node.event.data;
     const parents = [];

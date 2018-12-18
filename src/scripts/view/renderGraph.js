@@ -8,9 +8,9 @@ export default function renderGraph(view) {
   const wrapper = d3.select(dom.element("div"))
     .style("overflow-x", "auto")
     .style("background-color", "hsl(30,75%,96%)");
-  const svg = wrapper.append('svg')
+  const svg = wrapper.append("svg")
     .style("width", view.width)
-    .style("height", view.height)
+    .style("height", view.height);
 
   addNodeConnectionsTo(svg, view);
   addTextBoxesTo(svg, view);
