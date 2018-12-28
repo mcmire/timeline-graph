@@ -2,19 +2,19 @@ import _ from "lodash";
 import Company from "./Company";
 
 const entriesSymbol = Symbol("entries");
-const lastIdSymbol = Symbol("lastId");
+const lastIndexSymbol = Symbol("lastIndex");
 
 class CompanyCollection {
-  constructor({ entries = {}, lastId = -1 } = {}) {
+  constructor({ entries = {}, lastIndex = -1 } = {}) {
     Object.defineProperty(
       this,
       entriesSymbol,
-      { value: entries, enumerable: false }
+      { enumerable: false, value: entries }
     );
     Object.defineProperty(
       this,
-      lastIdSymbol,
-      { value: lastId, enumerable: false, writable: true }
+      lastIndexSymbol,
+      { enumerable: false, value: lastIndex, writable: true }
     );
   }
 
@@ -24,9 +24,9 @@ class CompanyCollection {
 
   cloneWith({
     entries = _.clone(this[entriesSymbol]),
-    lastId = this[lastIdSymbol],
+    lastIndex = this[lastIndexSymbol],
   }) {
-    return new this.constructor({ entries, lastId });
+    return new this.constructor({ entries, lastIndex });
   }
 
   size() {
@@ -83,19 +83,19 @@ class CompanyCollection {
       const foundCompany = possibleCompanies.find(company => company != null);
 
       if (foundCompany == null) {
-        const newId = this[lastIdSymbol] + 1;
-        // console.log("incrementing lastId to", newId);
+        const newIndex = this[lastIndexSymbol] + 1;
+        // console.log("incrementing lastIndex to", newIndex);
         const newCompany = new Company({
-          id: newId,
+          aliases: definiteNames.slice(1),
+          index: newIndex,
           name: names[0],
-          aliases: names.slice(1),
         });
-        const newEntries = names.reduce((entries, name) => {
+        const newEntries = definiteNames.reduce((entries, name) => {
           return { ...entries, [name]: newCompany };
         }, _.clone(this[entriesSymbol]));
         const newCompanies = this.cloneWith({
           entries: newEntries,
-          lastId: newId,
+          lastIndex: newIndex,
         });
         return [newCompanies, newCompany];
       } else {
@@ -112,14 +112,34 @@ class CompanyCollection {
     });
   }
 
-  add({ name, aliases }) {
-    return this.findOrCreate(name, ...aliases)[0];
+  add(company) {
+    const entries = this[entriesSymbol];
+
+    if (this.indexOf(company) === -1) {
+      const names = [company.name, ...company.aliases];
+      const newEntries = names.reduce((object, name) => {
+        return { ...object, [name]: company };
+      }, entries);
+      return this.cloneWith({ entries: newEntries, lastIndex: company.index });
+    } else {
+      return this;
+    }
+  }
+
+  uniq() {
+    const companies = _.uniqBy(this.toArray(), "id");
+    const entries = _.keyBy(companies, "name");
+
+    return new this.constructor({
+      entries: entries,
+      lastIndex: companies[companies.length - 1].index,
+    });
   }
 
   toArray() {
     return _.chain(Object.values(this[entriesSymbol]))
       .uniqBy("id")
-      .sortBy("id")
+      .sortBy("index")
       .value();
   }
 }

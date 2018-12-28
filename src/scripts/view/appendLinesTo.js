@@ -1,8 +1,24 @@
 import appendArrowheadTo from "./appendArrowheadTo";
 
+function normalizePoint(point, { relativeTo: origin }) {
+  return {
+    x: point.x - origin.x,
+    y: point.y - origin.y,
+  };
+}
+
+function calculateArccosInDegrees({ x, y }) {
+  const hypotenuse = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+  return Math.acos(-y / hypotenuse) * (360 / (Math.PI * 2));
+}
+
 export default function appendLinesTo(
   element,
-  { points, dashed = false, withArrowhead = false }
+  {
+    points,
+    dashed = false,
+    withArrowhead = false,
+  }
 ) {
   element
     .append("polyline")
@@ -13,7 +29,13 @@ export default function appendLinesTo(
     .attr("points", points.map(({x, y}) => [x, y].join(",")).join(" "));
 
   if (withArrowhead) {
-    const { x, y } = points[points.length - 1];
-    appendArrowheadTo(element, { x, y, direction: withArrowhead });
+    const lastPoint = points[points.length - 1];
+    const normalizedLastPoint = normalizePoint(
+      lastPoint,
+      { relativeTo: points[points.length - 2] }
+    );
+    const rotation = calculateArccosInDegrees(normalizedLastPoint);
+
+    appendArrowheadTo(element, { ...lastPoint, rotation });
   }
 }

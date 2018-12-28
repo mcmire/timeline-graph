@@ -44,6 +44,7 @@ export default function buildNodeGroups(companies, nodes) {
   const groupedNodes = wrapNodes({
     args: (node) => {
       const nodeGroupIndex = companies.indexOf(node.event.company);
+      //console.log("companies", _.map(companies.toArray(), "id"), "company", node.event.company.id);
 
       if (nodeGroupIndex === -1) {
         //console.log("companies", companies);

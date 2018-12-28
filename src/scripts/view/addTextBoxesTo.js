@@ -1,10 +1,14 @@
 import * as d3 from "d3";
-import { fontSize, textBoxPadding, lineHeight } from "../config";
+import { fontSize, lineHeight, textBoxPadding } from "../config";
 
 export default function addTextBoxesTo(svg, view) {
+  const nonHiddenNodes = view.nodes.filter(node => {
+    return !node.event.isHidden;
+  });
+
   svg
     .append("g")
-    .selectAll("g").data(view.nodes).enter().append("g")
+    .selectAll("g").data(nonHiddenNodes).enter().append("g")
     .each((node, nodeIndex, elements) => {
       const groupElement = d3.select(elements[nodeIndex]);
 

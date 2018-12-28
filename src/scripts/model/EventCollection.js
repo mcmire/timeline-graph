@@ -62,11 +62,9 @@ export default class EventCollection {
   }
 
   merge(setOfEventAttributes) {
-    setOfEventAttributes.forEach(eventAttributes => {
-      this.add(eventAttributes);
-    });
-
-    return this;
+    return setOfEventAttributes.reduce((collection, eventAttributes) => {
+      return collection.add(eventAttributes);
+    }, this);
   }
 
   toArray() {

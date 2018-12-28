@@ -1,27 +1,32 @@
+import nanoid from "nanoid";
+
 export default class Company {
-  constructor({ id, name, aliases }) {
-    if (id == null) {
-      throw `${this.constructor.name}: No id given`;
+  constructor({ index, name, aliases }) {
+    if (index == null) {
+      throw new Error(`${this.constructor.name}: No index given`);
     }
 
     if (name == null) {
-      throw `${this.constructor.name}: No name given`;
+      throw new Error(`${this.constructor.name}: No name given`);
     }
 
     if (aliases == null) {
-      throw `${this.constructor.name}: No aliases given`;
+      throw new Error(`${this.constructor.name}: No aliases given`);
     }
 
-    this.id = id;
+    this.index = index;
     this.name = name;
     this.aliases = aliases;
+
+    this.id = nanoid();
   }
 
   get attributes() {
     return {
-      id: this.id,
-      name: this.name,
       aliases: this.aliases,
+      id: this.id,
+      index: this.index,
+      name: this.name,
     };
   }
 }

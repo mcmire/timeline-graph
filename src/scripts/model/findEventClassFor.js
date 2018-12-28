@@ -1,4 +1,5 @@
 import AcquisitionEvent from "./AcquisitionEvent";
+import HiddenEvent from "./HiddenEvent";
 import IncorporationEvent from "./IncorporationEvent";
 import JointVentureEvent from "./JointVentureEvent";
 import MergerEvent from "./MergerEvent";
@@ -8,6 +9,7 @@ import TransferEvent from "./TransferEvent";
 
 const classes = {
   acquisition: AcquisitionEvent,
+  hidden: HiddenEvent,
   incorporation: IncorporationEvent,
   jointVenture: JointVentureEvent,
   merger: MergerEvent,

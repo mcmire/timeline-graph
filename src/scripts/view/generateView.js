@@ -22,11 +22,11 @@ export default function generateView(model) {
   const originalNodes = buildNodeGraph(buildMeasuredNodes(buildNodes(model.events)));
   //console.log("originalNodes", originalNodes);
   const measuredNodeGroups = buildNodeGroups(
-    model.companies,
+    model.companies.uniq(),
     originalNodes
   );
   const measuredNodes = measuredNodeGroups.getAllNodes();
-  console.log("measuredNodes", measuredNodes);
+  //console.log("measuredNodes", measuredNodes);
 
   /*
   const virtualXs = measuredNodes.map(node => node.event.date.value);
@@ -38,12 +38,15 @@ export default function generateView(model) {
     .domain([d3.min(virtualXs), d3.max(virtualXs)])
     .range([margin.left, maxX]);
   */
-  const measuredNodesSortedByDate = _.sortBy(measuredNodes, "event.date.value");
+  const measuredNodesSortedByEffectiveX = _.sortBy(measuredNodes, [
+    "event.date.value",
+    "width"
+  ]);
   const virtualXs = measuredNodes.map(node => node.event.date.value);
   const maxX =
     viewWidth -
     margin.right -
-    measuredNodesSortedByDate[measuredNodesSortedByDate.length - 1].width;
+    measuredNodesSortedByEffectiveX[measuredNodesSortedByEffectiveX.length - 1].width;
   const mapToX = d3.scaleTime()
     .domain([d3.min(virtualXs), d3.max(virtualXs)])
     .range([margin.left, maxX]);
@@ -70,24 +73,24 @@ export default function generateView(model) {
   );
   */
   const realYsByNodeGroupIndex = measuredNodeGroups.reduce(
-    (array, nodeGroup, i) => {
-      const nodeGroupHeight = nodeGroup.height / 2;
+    (object, nodeGroup, i) => {
+      const nodeGroupHalfHeight = nodeGroup.height / 2;
       let y;
 
       if (i > 0) {
         y = (
-          array[i - 1] +
+          object[nodeGroup.index - 1] +
           (measuredNodeGroups.at(i - 1).height / 2) +
           verticalSpacing +
-          nodeGroupHeight
+          nodeGroupHalfHeight
         );
       } else {
-        y = margin.top + nodeGroupHeight;
+        y = margin.top + nodeGroupHalfHeight;
       }
 
-      return array.concat([y]);
+      return { ...object, [nodeGroup.index]: y };
     },
-    []
+    {}
   );
 
   const y2OfLastNode =

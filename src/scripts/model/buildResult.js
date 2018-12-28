@@ -112,8 +112,7 @@ function buildAcquisitionResultFrom (companies, date, text) {
         company: childCompany,
         data: { parentCompany: company },
         date: date,
-        isHidden: true,
-        type: "reverse-acquisition",
+        type: "hidden",
       },
     ];
     return { companies, events };

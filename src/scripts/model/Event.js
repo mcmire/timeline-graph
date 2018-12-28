@@ -1,5 +1,5 @@
 export default class Event {
-  constructor({ date, company, data, id, isHidden }) {
+  constructor({ date, company, data, id }) {
     if (date == null) {
       throw new Error(`${this.constructor.name}: No date given`);
     }
@@ -16,15 +16,11 @@ export default class Event {
       throw new Error(`${this.constructor.name}: No id given`);
     }
 
-    if (isHidden == null) {
-      throw new Error(`${this.constructor.name}: No isHidden given`);
-    }
-
     this.date = date;
     this.company = company;
     this.data = data;
     this.id = id;
-    this.isHidden = isHidden;
+    this.isHidden = false;
 
     this.year = date.value.getFullYear();
     this.formattedYear = this.year + (date.isFuzzy ? "(?)" : "");
