@@ -106,6 +106,12 @@ class CompanyCollection {
     }
   }
 
+  indexOf(company) {
+    return _.findIndex(Object.values(this[entriesSymbol]), c => {
+      return c.id === company.id;
+    });
+  }
+
   add({ name, aliases }) {
     return this.findOrCreate(name, ...aliases)[0];
   }

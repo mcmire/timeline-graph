@@ -31,10 +31,10 @@ function buildIncorporationResultFrom(companies, date, text) {
 
     const founder = match[3];
     const event = {
-      type: "incorporation",
-      date: date,
       company: company,
-      data: { parentCompany, founder },
+      data: { founder, parentCompany },
+      date: date,
+      type: "incorporation",
     };
     return { companies: newCompanies, event: event };
   } else {
@@ -54,10 +54,10 @@ function buildJointVentureResultFrom(companies, date, text) {
     const firstParentCompany = companies.find(match[3]);
     const secondParentCompany = companies.find(match[4]);
     const event = {
-      type: "jointVenture",
-      date: date,
       company: company,
       data: { contributors: [firstParentCompany, secondParentCompany] },
+      date: date,
+      type: "jointVenture",
     };
     return { companies: newCompanies, event: event };
   } else {
@@ -77,10 +77,10 @@ function buildTransferResultFrom(companies, date, text) {
     const company = companies.findOrCreate(match[2], match[3]);
     const parentCompany = companies.find(match[4]);
     const event = {
-      type: "transfer",
-      date: date,
       company: company,
       data: { oldCompany, parentCompany },
+      date: date,
+      type: "transfer",
     };
     return { companies, event };
   } else {
@@ -96,10 +96,10 @@ function buildAcquisitionResultFrom (companies, date, text) {
     const company = companies.find(match[1]);
     const childCompany = companies.find(match[2]);
     const event = {
-      type: "acquisition",
-      date: date,
       company: company,
       data: { childCompany },
+      date: date,
+      type: "acquisition",
     };
     return { companies, event };
   } else {
@@ -122,10 +122,10 @@ function buildMergerResultFrom (companies, date, text) {
     const [newCompanies, company] = companies.findOrCreate(match[3], match[4]);
     const sources = _.sortBy([firstCompany, secondCompany], "index");
     const event = {
-      type: "merger",
-      date: date,
       company: company,
       data: { sources },
+      date: date,
+      type: "merger",
     };
     return { companies: newCompanies, event: event };
   } else {
@@ -144,12 +144,32 @@ function buildSpinoffResultFrom(companies, date, text) {
     const [newCompanies, company] = companies.findOrCreate(match[1], match[2]);
     const parentCompany = companies.find(match[3]);
     const event = {
-      type: "spinoff",
-      date: date,
       company: company,
       data: { parentCompany },
+      date: date,
+      type: "spinoff",
     };
     return { companies: newCompanies, event: event };
+  } else {
+    return null;
+  }
+}
+
+function buildReleaseResultFrom(companies, date, text) {
+  const companyRegex = buildCompanyRegex(companies);
+  const regexp = new RegExp(`^${companyRegex} releases (.+?)\\.$`);
+  const match = text.match(regexp);
+
+  if (match) {
+    const company = companies.find(match[1]);
+    const productName = match[2];
+    const event = {
+      company: company,
+      data: { productName },
+      date: date,
+      type: "release",
+    };
+    return { companies, event };
   } else {
     return null;
   }
@@ -161,5 +181,6 @@ export default function buildResult(companies, date, text) {
     buildTransferResultFrom(companies, date, text) ||
     buildAcquisitionResultFrom(companies, date, text) ||
     buildMergerResultFrom(companies, date, text) ||
-    buildSpinoffResultFrom(companies, date, text);
+    buildSpinoffResultFrom(companies, date, text) ||
+    buildReleaseResultFrom(companies, date, text);
 }

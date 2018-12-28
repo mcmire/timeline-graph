@@ -1,33 +1,5 @@
-1846?: The Erie and Michigan Telegraph Company is formed.
-
-1851: The New York and Mississippi Valley Printing Telegraph Company is formed.
-
-1856: The New York and Mississippi Valley Printing Telegraph Company and Erie and Michigan Telegraph Company merge to become the Western Union Telegraph Company (Western Union).
-
-December 1877: The American Speaking Telephone Company is formed.
-
-July 9, 1877: The Bell Telephone Company (Bell) is founded by Gardiner Hubbard.
-
-1872: The Western Electric Manufacturing Company (Western Electric Manufacturing) is founded by Enos M. Barton and Elisha Gray.
-
-February 12, 1878: The New England Telephone and Telegraph Company is founded.
-
-1879: The International Bell Telephone Company (IBTC) is founded by Gardiner Hubbard as a subsidiary of the Bell Telephone Company.
-
-February 17, 1879: The Bell Telephone Company and New England Telephone and Telegraph Company merge to become the National Bell Telephone Company (National Bell).
-
-March 20, 1880: National Bell and the American Speaking Telephone Company merge to become the American Bell Telephone Company (American Bell).
-
-#April 17, 1880: IBTC is split off from American Bell. [I'm not sure if this is true]
-
-April 17, 1880: The American Telephone & Telegraph Company (AT&T) is formed as a subsidiary of American Bell.
-
-1880: The Bell Telephone Company of Canada is formed as a subsidiary of National Bell.
-
-1881: Bell acquires Western Electric Manufacturing.
-
-April 26, 1882: The Bell Telephone Manufacturing Company (BTMC) is formed as a joint venture between IBTC and Western Electric Manufacturing.
-
-January 1, 1900: AT&T acquires American Bell.
-
-#1915: Western Electric Manufacturing is re-established as Western Electric Company, Inc. (Western Electric), a subsidiary of AT&T.
+2000: Foo Company is founded by Joe Schmoe.
+2005: Bar Company is founded.
+2010: Foo Company acquires Bar Company.
+#2012: Foo Company releases Widget A.
+#2014: Bar Company releases Widget B.

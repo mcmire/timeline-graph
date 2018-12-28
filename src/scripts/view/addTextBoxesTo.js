@@ -13,7 +13,7 @@ export default function addTextBoxesTo(svg, view) {
         .attr("stroke-width", "1px")
         .attr("fill", "white")
         .attr("x", node.x + 0.5)
-        .attr("y", node.y + 0.5)
+        .attr("y", node.adjustedY + 0.5)
         .attr("width", `${node.width}px`)
         .attr("height", `${node.height}px`);
 
@@ -21,7 +21,7 @@ export default function addTextBoxesTo(svg, view) {
         .attr("color", "black")
         .attr("style", `font-size: ${fontSize}px`)
         .attr("x", node.x + textBoxPadding + 0.5)
-        .attr("y", node.y + textBoxPadding + 0.5);
+        .attr("y", node.adjustedY + textBoxPadding + 0.5);
 
       node.lines.forEach((line, lineIndex) => {
         line.tokens.forEach((token, tokenIndex) => {

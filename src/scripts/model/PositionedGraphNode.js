@@ -1,7 +1,7 @@
 import _ from "lodash";
-import MeasuredGraphNode from "./MeasuredGraphNode";
+import GroupedNode from "./GroupedNode";
 
-export default class PositionedGraphNode extends MeasuredGraphNode {
+export default class PositionedGraphNode extends GroupedNode {
   constructor({ mapToX, mapToY, ...rest }) {
     super({ ...rest });
     this._mapToX = mapToX;
@@ -29,6 +29,7 @@ export default class PositionedGraphNode extends MeasuredGraphNode {
 
   _calculate() {
     this.x = this._mapToX(this.event.date.value);
-    this.y = this._mapToY(this.index);
+    this.y = this._mapToY(this.nodeGroupIndex);
+    this.adjustedY = this.y - this.halfHeight;
   }
 }

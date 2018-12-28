@@ -6,6 +6,9 @@ export default class MeasuredGraphNode extends GraphNode {
     this.lines = lines;
     this.width = width;
     this.height = height;
+
+    this.halfWidth = width / 2;
+    this.halfHeight = height / 2;
   }
 
   cloneWith({

@@ -1,13 +1,16 @@
-import _ from "lodash";
 import * as d3 from "d3";
-import { margin, verticalSpacing, viewWidth, defaultHeight } from "../config";
-import reindexNodes from "../model/reindexNodes";
-import buildNodeGraph from "../model/buildNodeGraph";
+import { defaultHeight, margin, verticalSpacing, viewWidth } from "../config";
+import _ from "lodash";
 import buildMeasuredNodes from "../model/buildMeasuredNodes";
+import buildNodeGraph from "../model/buildNodeGraph";
+import buildNodeGroups from "../model/buildNodeGroups";
 import buildNodes from "../model/buildNodes";
 import PositionedGraphNode from "../model/PositionedGraphNode";
+import wrapNodes from "../model/wrapNodes";
+//import reindexNodes from "../model/reindexNodes";
 
 export default function generateView(model) {
+  /*
   const measuredNodes = reindexNodes(
     buildNodeGraph(
       buildMeasuredNodes(
@@ -15,12 +18,17 @@ export default function generateView(model) {
       )
     )
   );
+  */
+  const originalNodes = buildNodeGraph(buildMeasuredNodes(buildNodes(model.events)));
+  //console.log("originalNodes", originalNodes);
+  const measuredNodeGroups = buildNodeGroups(
+    model.companies,
+    originalNodes
+  );
+  const measuredNodes = measuredNodeGroups.getAllNodes();
+  console.log("measuredNodes", measuredNodes);
 
-  // console.log("events", events);
-  // console.log("measuredNodes", measuredNodes);
-
-  // const sumOfWidths = _.sumBy(measuredNodes, "width");
-
+  /*
   const virtualXs = measuredNodes.map(node => node.event.date.value);
   const maxX =
     viewWidth -
@@ -29,9 +37,20 @@ export default function generateView(model) {
   const mapToX = d3.scaleTime()
     .domain([d3.min(virtualXs), d3.max(virtualXs)])
     .range([margin.left, maxX]);
+  */
+  const measuredNodesSortedByDate = _.sortBy(measuredNodes, "event.date.value");
+  const virtualXs = measuredNodes.map(node => node.event.date.value);
+  const maxX =
+    viewWidth -
+    margin.right -
+    measuredNodesSortedByDate[measuredNodesSortedByDate.length - 1].width;
+  const mapToX = d3.scaleTime()
+    .domain([d3.min(virtualXs), d3.max(virtualXs)])
+    .range([margin.left, maxX]);
 
+  /*
   const sortedMeasuredNodes = _.sortBy(measuredNodes, "index");
-  const realYsByNodeIndex = sortedMeasuredNodes.reduce(
+  const realYsByNodeGroupIndex = sortedMeasuredNodes.reduce(
     (object, node) => {
       let y;
 
@@ -49,43 +68,49 @@ export default function generateView(model) {
     },
     {},
   );
+  */
+  const realYsByNodeGroupIndex = measuredNodeGroups.reduce(
+    (array, nodeGroup, i) => {
+      const nodeGroupHeight = nodeGroup.height / 2;
+      let y;
+
+      if (i > 0) {
+        y = (
+          array[i - 1] +
+          (measuredNodeGroups.at(i - 1).height / 2) +
+          verticalSpacing +
+          nodeGroupHeight
+        );
+      } else {
+        y = margin.top + nodeGroupHeight;
+      }
+
+      return array.concat([y]);
+    },
+    []
+  );
 
   const y2OfLastNode =
-    d3.max(Object.values(realYsByNodeIndex)) +
-    sortedMeasuredNodes[sortedMeasuredNodes.length - 1].height;
+    d3.max(Object.values(realYsByNodeGroupIndex)) +
+    measuredNodeGroups.last.height;
   const viewHeight = Math.max(
     y2OfLastNode + verticalSpacing + margin.bottom,
     defaultHeight
   );
-  const mapToY = (index) => realYsByNodeIndex[index];
+  const mapToY = (nodeGroupIndex) => realYsByNodeGroupIndex[nodeGroupIndex];
 
-  const { positionedNodes } = measuredNodes.reduce(
-    (results, node) => {
-      const positionedNode = new PositionedGraphNode({
-        ...node,
-        mapToX,
-        mapToY,
-        parents: node.parents.map(parent => {
-          return results.positionedNodesById[parent.id];
-        }),
-      });
-
-      return {
-        positionedNodes: results.positionedNodes.concat([positionedNode]),
-        positionedNodesById: {
-          ...results.positionedNodesById,
-          [node.id]: positionedNode,
-        },
-      };
-    },
-    { positionedNodes: [], positionedNodesById: {} }
-  );
+  const positionedNodes = wrapNodes({
+    args: { mapToX, mapToY },
+    constructor: PositionedGraphNode,
+    nodes: measuredNodes,
+  });
+  //console.log("positionedNodes", positionedNodes);
 
   return {
-    width: viewWidth,
     height: viewHeight,
     mapToX: mapToX,
     mapToY: mapToY,
     nodes: positionedNodes,
+    width: viewWidth,
   };
 }
