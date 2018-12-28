@@ -1,29 +1,9 @@
-export default function appendArrowheadTo(
-  element,
-  {
-    x,
-    y,
-    direction,
-    rotation = 0,
-  }
-) {
-  const width = 4.5;
-  const height = 10;
-  let points;
+const WIDTH = 4.5;
+const HEIGHT = 10;
 
-  /*
-  if (direction === "down") {
-    points = [[x, y], [x + width, y - height], [x - width, y - height]];
-  } else if (direction === "up") {
-    points = [[x, y], [x - width, y + height], [x + width, y + height]];
-  } else if (direction === "right") {
-    points = [[x, y], [x - height, y - width], [x - height, y + width]];
-  } else {
-    throw new Error(`Unknown direction ${direction}.`);
-  }
-  */
-
-  points = [[x, y], [x - width, y + height], [x + width, y + height]];
+export default function appendArrowheadTo(element, { x, y, rotation = 0 }) {
+  // This faces up with the origin at the tip
+  const points = [[x, y], [x - WIDTH, y + HEIGHT], [x + WIDTH, y + HEIGHT]];
 
   return element
     .append("polygon")

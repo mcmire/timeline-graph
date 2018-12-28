@@ -78,17 +78,20 @@ function buildTransferResultFrom(companies, date, text) {
 
   if (match) {
     const oldCompany = companies.find(match[1]);
-    const company = companies.findOrCreate(match[2], match[3]);
+    const [newCompanies, newCompany] = companies.findOrCreate(
+      match[2],
+      match[3]
+    );
     const parentCompany = companies.find(match[4]);
     const events = [
       {
-        company: company,
+        company: newCompany,
         data: { oldCompany, parentCompany },
         date: date,
         type: "transfer",
       },
     ];
-    return { companies, events };
+    return { companies: newCompanies, events: events };
   } else {
     return null;
   }
