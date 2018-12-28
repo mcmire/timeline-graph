@@ -1,25 +1,30 @@
 export default class Event {
-  constructor({ date, company, data, id }) {
+  constructor({ date, company, data, id, isHidden }) {
     if (date == null) {
-      throw `${this.constructor.name}: No date given`;
+      throw new Error(`${this.constructor.name}: No date given`);
     }
 
     if (company == null) {
-      throw `${this.constructor.name}: No company given`;
+      throw new Error(`${this.constructor.name}: No company given`);
     }
 
     if (data == null) {
-      throw `${this.constructor.name}: No data given`;
+      throw new Error(`${this.constructor.name}: No data given`);
     }
 
     if (id == null) {
-      throw `${this.constructor.name}: No id given`;
+      throw new Error(`${this.constructor.name}: No id given`);
+    }
+
+    if (isHidden == null) {
+      throw new Error(`${this.constructor.name}: No isHidden given`);
     }
 
     this.date = date;
     this.company = company;
     this.data = data;
     this.id = id;
+    this.isHidden = isHidden;
 
     this.year = date.value.getFullYear();
     this.formattedYear = this.year + (date.isFuzzy ? "(?)" : "");
@@ -31,9 +36,10 @@ export default class Event {
 
   get attributes() {
     return {
-      date: this.date,
       company: this.company,
       data: this.data,
+      date: this.date,
+      isHidden: this.isHidden,
     };
   }
 }

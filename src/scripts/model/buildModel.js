@@ -1,20 +1,20 @@
 import _ from "lodash";
 import buildResult from "./buildResult";
-import EventCollection from "./EventCollection";
 import CompanyCollection from "./CompanyCollection";
+import EventCollection from "./EventCollection";
 
 function buildEventDate(rawDate) {
   const yearDateMatch = rawDate.match(/^(\d+)(\?)?$/);
 
   if (yearDateMatch) {
     return {
-      value: new Date(`Jan 1, ${yearDateMatch[1]}`),
       isFuzzy: (yearDateMatch[2] !== undefined),
+      value: new Date(`Jan 1, ${yearDateMatch[1]}`),
     };
   } else {
     return {
-      value: new Date(rawDate),
       isFuzzy: false,
+      value: new Date(rawDate),
     };
   }
 }
@@ -36,19 +36,19 @@ export default function buildModel(story) {
 
           if (result) {
             return {
-              events: model.events.add(result.event),
               companies: model.companies.merge(result.companies),
+              events: model.events.merge(result.events),
             };
           } else {
-            throw `Couldn't build result from "${line}"`;
+            throw new Error(`Couldn't build result from "${line}"`);
           }
         } else {
           return model;
         }
       },
       {
-        events: new EventCollection(),
         companies: new CompanyCollection(),
+        events: new EventCollection(),
       }
     );
 }

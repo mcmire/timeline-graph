@@ -9,12 +9,12 @@ export default class EventCollection {
     Object.defineProperty(
       this,
       eventsSymbol,
-      { value: events, enumerable: false }
+      { enumerable: false, value: events }
     );
     Object.defineProperty(
       this,
       lastIdSymbol,
-      { value: lastId, enumerable: false, writable: true }
+      { enumerable: false, value: lastId, writable: true }
     );
   }
 
@@ -59,6 +59,14 @@ export default class EventCollection {
     } else {
       return this;
     }
+  }
+
+  merge(setOfEventAttributes) {
+    setOfEventAttributes.forEach(eventAttributes => {
+      this.add(eventAttributes);
+    });
+
+    return this;
   }
 
   toArray() {

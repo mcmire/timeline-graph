@@ -30,13 +30,15 @@ function buildIncorporationResultFrom(companies, date, text) {
     }
 
     const founder = match[3];
-    const event = {
-      company: company,
-      data: { founder, parentCompany },
-      date: date,
-      type: "incorporation",
-    };
-    return { companies: newCompanies, event: event };
+    const events = [
+      {
+        company: company,
+        data: { founder, parentCompany },
+        date: date,
+        type: "incorporation",
+      },
+    ];
+    return { companies: newCompanies, events: events };
   } else {
     return null;
   }
@@ -53,13 +55,15 @@ function buildJointVentureResultFrom(companies, date, text) {
     const [newCompanies, company] = companies.findOrCreate(match[1], match[2]);
     const firstParentCompany = companies.find(match[3]);
     const secondParentCompany = companies.find(match[4]);
-    const event = {
-      company: company,
-      data: { contributors: [firstParentCompany, secondParentCompany] },
-      date: date,
-      type: "jointVenture",
-    };
-    return { companies: newCompanies, event: event };
+    const events = [
+      {
+        company: company,
+        data: { contributors: [firstParentCompany, secondParentCompany] },
+        date: date,
+        type: "jointVenture",
+      },
+    ];
+    return { companies: newCompanies, events: events };
   } else {
     return null;
   }
@@ -76,13 +80,15 @@ function buildTransferResultFrom(companies, date, text) {
     const oldCompany = companies.find(match[1]);
     const company = companies.findOrCreate(match[2], match[3]);
     const parentCompany = companies.find(match[4]);
-    const event = {
-      company: company,
-      data: { oldCompany, parentCompany },
-      date: date,
-      type: "transfer",
-    };
-    return { companies, event };
+    const events = [
+      {
+        company: company,
+        data: { oldCompany, parentCompany },
+        date: date,
+        type: "transfer",
+      },
+    ];
+    return { companies, events };
   } else {
     return null;
   }
@@ -95,13 +101,22 @@ function buildAcquisitionResultFrom (companies, date, text) {
   if (match) {
     const company = companies.find(match[1]);
     const childCompany = companies.find(match[2]);
-    const event = {
-      company: company,
-      data: { childCompany },
-      date: date,
-      type: "acquisition",
-    };
-    return { companies, event };
+    const events = [
+      {
+        company: company,
+        data: { childCompany },
+        date: date,
+        type: "acquisition",
+      },
+      {
+        company: childCompany,
+        data: { parentCompany: company },
+        date: date,
+        isHidden: true,
+        type: "reverse-acquisition",
+      },
+    ];
+    return { companies, events };
   } else {
     return null;
   }
@@ -121,13 +136,15 @@ function buildMergerResultFrom (companies, date, text) {
     const secondCompany = companies.find(match[2]);
     const [newCompanies, company] = companies.findOrCreate(match[3], match[4]);
     const sources = _.sortBy([firstCompany, secondCompany], "index");
-    const event = {
-      company: company,
-      data: { sources },
-      date: date,
-      type: "merger",
-    };
-    return { companies: newCompanies, event: event };
+    const events = [
+      {
+        company: company,
+        data: { sources },
+        date: date,
+        type: "merger",
+      },
+    ];
+    return { companies: newCompanies, events: events };
   } else {
     return null;
   }
@@ -143,13 +160,15 @@ function buildSpinoffResultFrom(companies, date, text) {
   if (match) {
     const [newCompanies, company] = companies.findOrCreate(match[1], match[2]);
     const parentCompany = companies.find(match[3]);
-    const event = {
-      company: company,
-      data: { parentCompany },
-      date: date,
-      type: "spinoff",
-    };
-    return { companies: newCompanies, event: event };
+    const events = [
+      {
+        company: company,
+        data: { parentCompany },
+        date: date,
+        type: "spinoff",
+      },
+    ];
+    return { companies: newCompanies, events: events };
   } else {
     return null;
   }
@@ -163,13 +182,15 @@ function buildReleaseResultFrom(companies, date, text) {
   if (match) {
     const company = companies.find(match[1]);
     const productName = match[2];
-    const event = {
-      company: company,
-      data: { productName },
-      date: date,
-      type: "release",
-    };
-    return { companies, event };
+    const events = [
+      {
+        company: company,
+        data: { productName },
+        date: date,
+        type: "release",
+      },
+    ];
+    return { companies, events };
   } else {
     return null;
   }
