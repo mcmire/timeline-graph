@@ -1,6 +1,7 @@
 import _ from "lodash";
 
 function wrapNode(node, constructor, args, results) {
+  /*
   const wrappedRelationships = node.relationships.map(relationship => {
     const wrappedRelationshipNode =
       results.wrappedNodesById[relationship.node.id];
@@ -11,11 +12,12 @@ function wrapNode(node, constructor, args, results) {
       return { ...relationship, node: wrappedRelationshipNode };
     }
   });
+  */
 
   const wrappedNode = new constructor({
     ...node,
     ...args,
-    relationships: wrappedRelationships,
+    //relationships: wrappedRelationships,
   });
 
   return {

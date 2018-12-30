@@ -118,12 +118,14 @@ function buildAcquisitionResultFrom (companies, date, text) {
         date: date,
         type: "acquisition",
       },
+      /*
       {
         company: childCompany,
         data: { parentCompany: company },
         date: date,
         type: "hidden",
       },
+      */
     ];
     return { companies, events };
   } else {

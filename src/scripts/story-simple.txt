@@ -1,5 +1,0 @@
-2000: Foo Company is founded by Joe Schmoe.
-2005: Bar Company is founded.
-2010: Foo Company acquires Bar Company.
-2012: Foo Company releases Widget A.
-2014: Bar Company releases Widget B.
