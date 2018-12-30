@@ -22,7 +22,10 @@ function buildIncorporationResultFrom(companies, date, text) {
   );
 
   if (match) {
-    const [newCompanies, company] = companies.findOrCreate(match[1], match[2]);
+    const [newCompanies, company] = companies.create({
+      aliases: [match[2]],
+      name: match[1],
+    });
     let parentCompany;
 
     if (match[4] != null) {
@@ -52,7 +55,10 @@ function buildJointVentureResultFrom(companies, date, text) {
   );
 
   if (match) {
-    const [newCompanies, company] = companies.findOrCreate(match[1], match[2]);
+    const [newCompanies, company] = companies.create({
+      aliases: [match[2]],
+      name: match[1],
+    });
     const firstParentCompany = companies.find(match[3]);
     const secondParentCompany = companies.find(match[4]);
     const events = [
@@ -78,10 +84,10 @@ function buildTransferResultFrom(companies, date, text) {
 
   if (match) {
     const oldCompany = companies.find(match[1]);
-    const [newCompanies, newCompany] = companies.findOrCreate(
-      match[2],
-      match[3]
-    );
+    const [newCompanies, newCompany] = companies.create({
+      aliases: [match[3]],
+      name: match[2],
+    });
     const parentCompany = companies.find(match[4]);
     const events = [
       {
@@ -136,7 +142,10 @@ function buildMergerResultFrom (companies, date, text) {
   if (match) {
     const firstCompany = companies.find(match[1]);
     const secondCompany = companies.find(match[2]);
-    const [newCompanies, company] = companies.findOrCreate(match[3], match[4]);
+    const [newCompanies, company] = companies.create({
+      aliases: [match[4]],
+      name: match[3],
+    });
     const sources = _.sortBy([firstCompany, secondCompany], "index");
     const events = [
       {
@@ -160,7 +169,10 @@ function buildSpinoffResultFrom(companies, date, text) {
   const match = text.match(regexp);
 
   if (match) {
-    const [newCompanies, company] = companies.findOrCreate(match[1], match[2]);
+    const [newCompanies, company] = companies.create({
+      aliases: [match[2]],
+      name: match[1],
+    });
     const parentCompany = companies.find(match[3]);
     const events = [
       {

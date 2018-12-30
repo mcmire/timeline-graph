@@ -73,6 +73,46 @@ class CompanyCollection {
     }
   }
 
+  create({ name, aliases, ...rest }) {
+    const definiteNames = [name, ...aliases].filter(n => n != null);
+
+    if (definiteNames.length > 0) {
+      const possibleCompanies = definiteNames.map(n => {
+        return this[entriesSymbol][n];
+      });
+      const foundCompany = possibleCompanies.find(company => company != null);
+
+      if (foundCompany == null) {
+        const newIndex = (
+          rest.index == null ?
+            this[lastIndexSymbol] + 1 :
+            rest.index
+        );
+        const newCompany = new Company({
+          aliases: definiteNames.slice(1),
+          index: newIndex,
+          name: definiteNames[0],
+        });
+        const newEntries = definiteNames.reduce((entries, n) => {
+          return { ...entries, [n]: newCompany };
+        }, _.clone(this[entriesSymbol]));
+        const newCompanies = this.cloneWith({
+          entries: newEntries,
+          lastIndex: newIndex,
+        });
+        return [newCompanies, newCompany];
+      } else {
+        throw new Error(
+          `Company ${foundCompany.name} (${foundCompany.aliases.join(", ")}) ` +
+          "already exists"
+        );
+      }
+    } else {
+      return [this, null];
+    }
+  }
+
+  /*
   findOrCreate(...names) {
     const definiteNames = names.filter(name => name != null);
 
@@ -105,6 +145,7 @@ class CompanyCollection {
       return [this, null];
     }
   }
+  */
 
   indexOf(company) {
     return _.findIndex(Object.values(this[entriesSymbol]), c => {
