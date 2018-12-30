@@ -100,7 +100,13 @@ export default function generateView(model) {
     y2OfLastNode + verticalSpacing + margin.bottom,
     defaultHeight
   );
-  const mapToY = (nodeGroupIndex) => realYsByNodeGroupIndex[nodeGroupIndex];
+  const mapToY = (nodeGroupIndex) => {
+    if (nodeGroupIndex in realYsByNodeGroupIndex) {
+      return realYsByNodeGroupIndex[nodeGroupIndex];
+    } else {
+      throw new Error(`${nodeGroupIndex} is not a valid node group index`);
+    }
+  };
 
   const positionedNodes = wrapNodes({
     args: { mapToX, mapToY },

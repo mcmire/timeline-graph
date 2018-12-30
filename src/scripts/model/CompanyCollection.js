@@ -18,6 +18,12 @@ class CompanyCollection {
     );
   }
 
+  findAllByIndex(index) {
+    return Object.values(this[entriesSymbol]).filter(company => {
+      return index === company.index;
+    });
+  }
+
   clone() {
     return this.cloneWith({});
   }

@@ -86,6 +86,7 @@ function buildTransferResultFrom(companies, date, text) {
     const oldCompany = companies.find(match[1]);
     const [newCompanies, newCompany] = companies.create({
       aliases: [match[3]],
+      index: oldCompany.index,
       name: match[2],
     });
     const parentCompany = companies.find(match[4]);

@@ -3,7 +3,8 @@ import GroupedNode from "./GroupedNode";
 import wrapNodes from "./wrapNodes";
 
 class NodeGroup {
-  constructor({ nodes, index }) {
+  constructor({ companies, nodes, index }) {
+    this.companies = companies;
     this.nodes = nodes;
     this.index = index;
     this.height = _.max(_.map(this.nodes, "height"));
@@ -43,27 +44,23 @@ class NodeGroupCollection {
 export default function buildNodeGroups(companies, nodes) {
   const groupedNodes = wrapNodes({
     args: (node) => {
-      const nodeGroupIndex = companies.indexOf(node.event.company);
-      //console.log("companies", _.map(companies.toArray(), "id"), "company", node.event.company.id);
-
-      if (nodeGroupIndex === -1) {
-        //console.log("companies", companies);
-        throw new Error(`Can't find company ${node.event.company.id}`);
-      }
-
-      return { nodeGroupIndex };
+      return { nodeGroupIndex: node.event.company.index };
     },
     constructor: GroupedNode,
     nodes: nodes,
   });
-  //console.log("groupedNodes", groupedNodes);
-  const nodesByCompanyId = _.groupBy(groupedNodes, "event.company.id");
+  const groupedNodesByCompanyIndex =
+    _.groupBy(groupedNodes, "event.company.index");
+  const companyIndices = Object.keys(groupedNodesByCompanyIndex)
+    .map(Number)
+    .sort((a, b) => a - b);
 
   return new NodeGroupCollection(
-    companies.map((company, index) => {
+    companyIndices.map(companyIndex => {
       return new NodeGroup({
-        index: index,
-        nodes: nodesByCompanyId[company.id],
+        companies: companies.findAllByIndex(companyIndex),
+        index: companyIndex,
+        nodes: groupedNodesByCompanyIndex[companyIndex],
       });
     })
   );
