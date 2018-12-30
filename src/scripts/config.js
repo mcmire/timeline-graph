@@ -6,4 +6,4 @@ export const lineHeight = fontSize * 1.5;
 export const textBoxPadding = 10;
 export const defaultHeight = 300;
 //export const viewWidth = 4500;
-export const viewWidth = 2000;
+export const viewWidth = 3000;
