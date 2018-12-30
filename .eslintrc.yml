@@ -37,7 +37,7 @@ rules:
     - { SwitchCase: 1 }
   max-len:
     - error
-    - 80
+    - { code: 80, ignoreComments: true }
   no-caller: error
   no-catch-shadow: error
   no-cond-assign:
@@ -55,6 +55,9 @@ rules:
   no-trailing-spaces: error
   no-unneeded-ternary: error
   no-unused-expressions: error
+  no-unused-vars:
+    - error
+    - { argsIgnorePattern: "^_" }
   no-with: error
   one-var:
     - error
