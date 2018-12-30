@@ -4,11 +4,11 @@ export default class GraphNode {
   constructor({
     event,
     index,
-    parents = [],
+    relationships = [],
   }) {
     this.event = event;
     this.index = index;
-    this.parents = parents;
+    this.relationships = relationships;
 
     this.company = this.event.company;
     this.id = nanoid();
@@ -17,13 +17,13 @@ export default class GraphNode {
   cloneWith({
     event = this.event,
     index = this.index,
-    parents = this.parents,
+    relationships = this.relationships,
     ...rest
   }) {
     return new this.constructor({
       event,
       index,
-      parents,
+      relationships,
       ...rest,
     });
   }

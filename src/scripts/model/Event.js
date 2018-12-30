@@ -1,5 +1,9 @@
 export default class Event {
-  constructor({ date, company, data, id }) {
+  constructor({ type, date, company, data, id }) {
+    if (type == null) {
+      throw new Error(`${this.constructor.type}: No type given`);
+    }
+
     if (date == null) {
       throw new Error(`${this.constructor.name}: No date given`);
     }
@@ -16,6 +20,7 @@ export default class Event {
       throw new Error(`${this.constructor.name}: No id given`);
     }
 
+    this.type = type;
     this.date = date;
     this.company = company;
     this.data = data;
@@ -36,6 +41,7 @@ export default class Event {
       data: this.data,
       date: this.date,
       isHidden: this.isHidden,
+      type: this.type,
     };
   }
 }

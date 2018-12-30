@@ -5,7 +5,7 @@ import buildMeasuredNodes from "../model/buildMeasuredNodes";
 import buildNodeGraph from "../model/buildNodeGraph";
 import buildNodeGroups from "../model/buildNodeGroups";
 import buildNodes from "../model/buildNodes";
-import PositionedGraphNode from "../model/PositionedGraphNode";
+import PositionedGraphNode from "./PositionedGraphNode";
 import wrapNodes from "../model/wrapNodes";
 //import reindexNodes from "../model/reindexNodes";
 
@@ -25,6 +25,7 @@ export default function generateView(model) {
     model.companies.uniq(),
     originalNodes
   );
+  //console.log("measuredNodeGroups", measuredNodeGroups);
   const measuredNodes = measuredNodeGroups.getAllNodes();
   //console.log("measuredNodes", measuredNodes);
 

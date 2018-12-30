@@ -2,32 +2,49 @@ export default function buildNodeGraph(originalNodes) {
   const lastNodesByCompanyId = {};
 
   return originalNodes.map(node => {
+    const eventType = node.event.type;
     const companyId = node.event.company.id;
     const data = node.event.data;
-    const parents = [];
+    const relationships = [];
 
-    const companyNode = lastNodesByCompanyId[companyId];
-    if (companyNode != null) {
-      parents.push(companyNode);
+    function buildRelationshipTo(n) {
+      return { eventType: eventType, node: n };
+    }
+
+    const lastNodeOfSameCompany = lastNodesByCompanyId[companyId];
+    if (lastNodeOfSameCompany != null) {
+      relationships.push(buildRelationshipTo(lastNodeOfSameCompany));
     }
 
     if (data.sources != null) {
-      parents.push(
-        ...data.sources.map(company => {
-          return lastNodesByCompanyId[company.id];
-        })
-      );
-    } else if (data.contributors != null) {
-      parents.push(
-        ...data.contributors.map(company => {
-          return lastNodesByCompanyId[company.id];
-        })
-      );
-    } else if (data.parentCompany != null) {
-      parents.push(lastNodesByCompanyId[data.parentCompany.id]);
+      data.sources.forEach(company => {
+        relationships.push(
+          buildRelationshipTo(lastNodesByCompanyId[company.id])
+        );
+      });
     }
 
-    const newNode = node.cloneWith({ parents: parents });
+    if (data.contributors != null) {
+      data.contributors.forEach(company => {
+        relationships.push(
+          buildRelationshipTo(lastNodesByCompanyId[company.id])
+        );
+      });
+    }
+
+    if (data.parentCompany != null) {
+      relationships.push(
+        buildRelationshipTo(lastNodesByCompanyId[data.parentCompany.id])
+      );
+    }
+
+    if (data.oldCompany != null) {
+      relationships.push(
+        buildRelationshipTo(lastNodesByCompanyId[data.oldCompany.id])
+      );
+    }
+
+    const newNode = node.cloneWith({ relationships });
     lastNodesByCompanyId[companyId] = newNode;
 
     return newNode;

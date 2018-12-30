@@ -1,49 +1,22 @@
 import _ from "lodash";
 
-function wrapNode(
-  node,
-  constructor,
-  args,
-  results,
-  { addToNodes = true } = {}
-) {
-  /*
-  const newResults = node.parents
-    .filter(parent => parent.isHidden)
-    .reduce((_results, parent) => {
-      return wrapNode(
-        parent,
-        constructor,
-        args,
-        _results,
-        { addToNodes: false }
-      );
-    }, results);
-  */
+function wrapNode(node, constructor, args, results) {
+  const wrappedRelationships = node.relationships.map(relationship => {
+    const wrappedRelationshipNode =
+      results.wrappedNodesById[relationship.node.id];
 
-  const wrappedParents = node.parents.map(parent => {
-    const wrappedParentNode = results.wrappedNodesById[parent.id];
-
-    if (wrappedParentNode == null) {
-      throw new Error("Can't find parent");
+    if (wrappedRelationshipNode == null) {
+      throw new Error("Can't find node for relationship");
     } else {
-      return wrappedParentNode;
+      return { ...relationship, node: wrappedRelationshipNode };
     }
   });
 
   const wrappedNode = new constructor({
     ...node,
     ...args,
-    parents: wrappedParents,
+    relationships: wrappedRelationships,
   });
-
-  /*
-  const newWrappedNodes = (
-    addToNodes ?
-      newResults.wrappedNodes.concat([wrappedNode]) :
-      newResults.wrappedNodes
-  );
-  */
 
   return {
     wrappedNodes: results.wrappedNodes.concat([wrappedNode]),

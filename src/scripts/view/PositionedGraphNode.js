@@ -1,5 +1,6 @@
 import _ from "lodash";
-import GroupedNode from "./GroupedNode";
+import calculateBounds from "./calculateBounds";
+import GroupedNode from "../model/GroupedNode";
 
 export default class PositionedGraphNode extends GroupedNode {
   constructor({ mapToX, mapToY, ...rest }) {
@@ -31,5 +32,6 @@ export default class PositionedGraphNode extends GroupedNode {
     this.x = this._mapToX(this.event.date.value);
     this.y = this._mapToY(this.nodeGroupIndex);
     this.adjustedY = this.y - this.halfHeight;
+    this.bounds = calculateBounds(this);
   }
 }
