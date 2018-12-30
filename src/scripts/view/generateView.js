@@ -7,23 +7,23 @@ import buildNodes from "../model/buildNodes";
 import buildRelationships from "../model/buildRelationships";
 import PositionedGraphNode from "./PositionedGraphNode";
 import wrapNodes from "../model/wrapNodes";
-//import reindexNodes from "../model/reindexNodes";
 
 export default function generateView(model) {
-  const measuredNodes = buildMeasuredNodes(buildNodes(model.events));
+  const nodes = buildNodes(model.events);
+  const measuredNodes = buildMeasuredNodes(nodes);
   const measuredNodeGroups = buildNodeGroups(
     model.companies.uniq(),
-    measuredNodes
+    measuredNodes,
+    buildRelationships(measuredNodes),
   );
-  const groupedNodes = _.sortBy(measuredNodeGroups.getAllNodes(), "index");
 
-  const groupedNodesSortedByEffectiveX = _.sortBy(
-    groupedNodes,
+  const measuredNodesSortedByEffectiveX = _.sortBy(
+    measuredNodes,
     ["event.date.value", "width"],
   );
   const rightmostMeasuredNode =
-    groupedNodesSortedByEffectiveX[groupedNodesSortedByEffectiveX.length - 1];
-  const virtualXs = groupedNodes.map(node => node.event.date.value);
+    measuredNodesSortedByEffectiveX[measuredNodesSortedByEffectiveX.length - 1];
+  const virtualXs = measuredNodes.map(node => node.event.date.value);
   const maxX = viewWidth - margin.right - rightmostMeasuredNode.width;
   const mapToX = d3.scaleTime()
     .domain([d3.min(virtualXs), d3.max(virtualXs)])
@@ -65,12 +65,12 @@ export default function generateView(model) {
     }
   };
 
+  const groupedNodes = _.sortBy(measuredNodeGroups.getAllNodes(), "index");
   const positionedNodes = wrapNodes({
     args: { mapToX, mapToY },
     constructor: PositionedGraphNode,
     nodes: groupedNodes,
   });
-
   const relationships = buildRelationships(positionedNodes);
 
   return {

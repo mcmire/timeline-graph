@@ -42,15 +42,26 @@ export default function addNodeConnectionsTo(svg, view) {
             { x: x, y: rel.from[0].bounds.halfY },
           );
         } else {
+          /*
           const jut = Math.max(
             (rel.to[0].bounds.x1 - rel.from[0].bounds.x2),
             30
           );
+          */
+          const jut = 30;
           const x = rel.to[0].bounds.x1 - jut;
+
+          appendLinesTo(groupElement, {
+            points: [
+              { x: rel.from[0].bounds.halfX, y: rel.from[0].bounds.halfY },
+              { x: x - jut, y: rel.from[0].bounds.halfY },
+            ],
+          });
           appendLinesTo(groupElement, {
             dashed: true,
             points: [
-              { x: rel.from[0].bounds.halfX, y: rel.from[0].bounds.y2 },
+              //{ x: rel.from[0].bounds.halfX, y: rel.from[0].bounds.y2 },
+              { x: x - jut, y: rel.from[0].bounds.halfY },
               { x: x, y: rel.to[0].bounds.halfY },
             ],
           });
@@ -63,37 +74,57 @@ export default function addNodeConnectionsTo(svg, view) {
           });
           appendCircleTo(
             groupElement,
-            { x: x, y: rel.to[0].bounds.halfY },
+            //{ x: x, y: rel.to[0].bounds.halfY },
+            { x: x - 30, y: rel.from[0].bounds.halfY },
           );
         }
       } else if (rel.type === "source") {
+        const jut = 30;
+
         rel.from.forEach((source, i) => {
-          const args = {
-            points: [
-              { x: source.bounds.x2, y: source.bounds.halfY },
-              { x: rel.to[0].bounds.x1 - 30, y: source.bounds.halfY },
-            ],
-            withArrowhead: false,
-          };
+          if (source.bounds.y2 >= rel.to[0].bounds.y2) {
+            const args = {
+              points: [
+                { x: source.bounds.x2, y: source.bounds.halfY },
+                { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY },
+                { x: rel.to[0].bounds.x1 - jut, y: rel.to[0].bounds.halfY },
+              ],
+              withArrowhead: false,
+            };
+            appendLinesTo(groupElement, args);
 
-          if (i === 0) {
-            args.points.push({
-              x: rel.to[0].bounds.x1 - 30,
-              y: rel.to[0].bounds.halfY,
-            });
-            args.points.push({
-              x: rel.to[0].bounds.x1,
-              y: rel.to[0].bounds.halfY,
-            });
-            args.withArrowhead = true;
+            appendCircleTo(
+              groupElement,
+              { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY },
+            );
+          } else {
+            const args = {
+              points: [
+                { x: source.bounds.x2, y: source.bounds.halfY },
+                { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY },
+              ],
+              withArrowhead: false,
+            };
+
+            if (i === 0) {
+              args.points.push({
+                x: rel.to[0].bounds.x1 - jut,
+                y: rel.to[0].bounds.halfY,
+              });
+              args.points.push({
+                x: rel.to[0].bounds.x1,
+                y: rel.to[0].bounds.halfY,
+              });
+              args.withArrowhead = true;
+            }
+
+            appendLinesTo(groupElement, args);
+
+            appendCircleTo(
+              groupElement,
+              { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY }
+            );
           }
-
-          appendLinesTo(groupElement, args);
-
-          appendCircleTo(groupElement, {
-            x: rel.to[0].bounds.x1 - 30,
-            y: source.bounds.halfY,
-          });
         });
       }
     });
