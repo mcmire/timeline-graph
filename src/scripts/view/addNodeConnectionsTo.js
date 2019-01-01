@@ -41,6 +41,15 @@ export default function addNodeConnectionsTo(svg, view) {
             groupElement,
             { x: x, y: rel.from[0].bounds.halfY },
           );
+        } else if (rel.from[0].bounds.x2 > rel.to[0].bounds.x1) {
+          appendLinesTo(groupElement, {
+            dashed: true,
+            points: [
+              { x: rel.from[0].bounds.halfX, y: rel.from[0].bounds.y2 },
+              { x: rel.to[0].bounds.halfX, y: rel.to[0].bounds.y1 },
+            ],
+            withArrowhead: true,
+          });
         } else {
           /*
           const jut = Math.max(
@@ -53,7 +62,7 @@ export default function addNodeConnectionsTo(svg, view) {
 
           appendLinesTo(groupElement, {
             points: [
-              { x: rel.from[0].bounds.halfX, y: rel.from[0].bounds.halfY },
+              { x: rel.from[0].bounds.x2, y: rel.from[0].bounds.halfY },
               { x: x - jut, y: rel.from[0].bounds.halfY },
             ],
           });
@@ -80,50 +89,82 @@ export default function addNodeConnectionsTo(svg, view) {
         }
       } else if (rel.type === "source") {
         const jut = 30;
+        const originateFromX2 = rel.from.some(source => {
+          return source.bounds.x2 > (rel.to[0].bounds.x1 - jut);
+        });
 
         rel.from.forEach((source, i) => {
           if (source.bounds.y2 >= rel.to[0].bounds.y2) {
-            const args = {
-              points: [
-                { x: source.bounds.x2, y: source.bounds.halfY },
-                { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY },
-                { x: rel.to[0].bounds.x1 - jut, y: rel.to[0].bounds.halfY },
-              ],
-              withArrowhead: false,
-            };
-            appendLinesTo(groupElement, args);
-
-            appendCircleTo(
-              groupElement,
-              { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY },
-            );
-          } else {
-            const args = {
-              points: [
-                { x: source.bounds.x2, y: source.bounds.halfY },
-                { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY },
-              ],
-              withArrowhead: false,
-            };
-
-            if (i === 0) {
-              args.points.push({
-                x: rel.to[0].bounds.x1 - jut,
-                y: rel.to[0].bounds.halfY,
+            if (originateFromX2) {
+              const x = Math.max(
+                source.bounds.x2 + jut,
+                rel.to[0].bounds.halfX
+              );
+              appendLinesTo(groupElement, {
+                points: [
+                  { x: source.bounds.x2, y: source.bounds.halfY },
+                  { x: x, y: source.bounds.halfY },
+                  { x: x, y: rel.to[0].bounds.y2 },
+                ],
+                withArrowhead: true,
               });
-              args.points.push({
-                x: rel.to[0].bounds.x1,
-                y: rel.to[0].bounds.halfY,
-              });
-              args.withArrowhead = true;
+            } else {
+              const args = {
+                points: [
+                  { x: source.bounds.x2, y: source.bounds.halfY },
+                  { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY },
+                  { x: rel.to[0].bounds.x1 - jut, y: rel.to[0].bounds.halfY },
+                ],
+              };
+              appendLinesTo(groupElement, args);
+
+              appendCircleTo(
+                groupElement,
+                { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY },
+              );
             }
+          } else {
+            if (originateFromX2) {
+              const x = Math.max(
+                source.bounds.x2 + jut,
+                rel.to[0].bounds.halfX
+              );
+              appendLinesTo(groupElement, {
+                points: [
+                  { x: source.bounds.x2, y: source.bounds.halfY },
+                  { x: x, y: source.bounds.halfY },
+                  { x: x, y: rel.to[0].bounds.y1 },
+                ],
+                withArrowhead: true,
+              });
+            } else {
+              const args = {
+                points: [
+                  { x: source.bounds.x2, y: source.bounds.halfY },
+                  { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY },
+                ],
+                withArrowhead: false,
+              };
 
-            appendLinesTo(groupElement, args);
+              if (i === 0) {
+                args.points.push({
+                  x: rel.to[0].bounds.x1 - jut,
+                  y: rel.to[0].bounds.halfY,
+                });
+                args.points.push({
+                  x: rel.to[0].bounds.x1,
+                  y: rel.to[0].bounds.halfY,
+                });
+                args.withArrowhead = true;
+              }
 
-            appendCircleTo(
-              groupElement,
-              { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY }
-            );
+              appendLinesTo(groupElement, args);
+
+              appendCircleTo(
+                groupElement,
+                { x: rel.to[0].bounds.x1 - jut, y: source.bounds.halfY }
+              );
+            }
           }
         });
       }

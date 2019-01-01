@@ -1,0 +1,11 @@
+2000: A Company (A) is founded by Joe Schmoe.
+2001: B Company (B) is founded.
+2002: A acquires B.
+2003: C Company (C) is founded.
+2004: A releases Widget A.
+2005: A releases Widget B.
+2006: A and C merge to become D Company (D).
+2007: E Company (E) is founded as a subsidiary of D.
+2008: F Company (F) is split off from B Company.
+2009: G Company (G) is formed as a joint venture between B and E.
+2010: C is re-established as I Company (I), a subsidiary of F.

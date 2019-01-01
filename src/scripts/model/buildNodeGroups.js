@@ -1,4 +1,5 @@
 import _ from "lodash";
+import applyOrderingRules from "./applyOrderingRules";
 import GroupedNode from "./GroupedNode";
 import wrapNodes from "./wrapNodes";
 
@@ -41,62 +42,50 @@ class NodeGroupCollection {
   }
 }
 
-function concatAsSet(set1, set2) {
-  return set2.reduce((finalSet, value) => {
-    const index = finalSet.indexOf(value);
+function generateInitialOrderingRulesFrom(relationships) {
+  return relationships.reduce((array, rel) => {
+    const from = _.map(rel.from, "event.company.index");
+    const to = _.map(rel.to, "event.company.index");
 
-    if (index !== -1) {
-      return [
-        ...finalSet.slice(0, index),
-        ...finalSet.slice(index + 1),
-        value,
-      ];
+    if (_.uniq(from.concat(to)).length === 1) {
+      return array;
     } else {
-      return [...finalSet, value];
+      return [...array, { from: from, to: to, type: rel.type }];
     }
-  }, set1);
+  }, []);
+}
+
+function normalizeOrderingRules(orderingRules) {
+  return orderingRules.map(({ type, from, to }) => {
+    return (type === "source" ? [from[0], to[0], from[1]] : from.concat(to));
+  });
 }
 
 function determineCompanyIndexOrder(relationships) {
-  const orderingRules = relationships.reduce((array, rel) => {
-    const from = _.map(rel.from, "event.company.index");
-    const to = _.map(rel.to, "event.company.index");
-    const rule = (
-      rel.type === "source" ?
-        [from[0], to[0], from[1]] :
-        (
-          rel.type === "acquired" ?
-            [...from, ...to].sort((a, b) => a - b) :
-            [...from, ...to]
-        )
-    );
-
-    if (_.uniq(rule).length === 1) {
-      return array;
-    } else {
-      return [...array, rule];
-    }
-  }, []);
-
-  return orderingRules.reduce((finalOrder, rule) => {
-    if (finalOrder.length > 0) {
-      const index = finalOrder.indexOf(rule[0]);
-
-      if (index !== -1) {
-        return concatAsSet(finalOrder.slice(0, index + 1), rule.slice(1))
-          .concat(finalOrder.slice(index + 1));
-      } else {
-        return concatAsSet(finalOrder, rule);
-      }
-    } else {
-      return rule;
-    }
-  }, []);
+  const initialOrderingRules = generateInitialOrderingRulesFrom(relationships);
+  console.log("initialOrderingRules", initialOrderingRules);
+  const normalizedOrderingRules = normalizeOrderingRules(initialOrderingRules);
+  console.log("normalizedOrderingRules", normalizedOrderingRules);
+  const appliedOrderingRules = applyOrderingRules(normalizedOrderingRules);
+  return appliedOrderingRules;
 }
 
 export default function buildNodeGroups(companies, nodes, relationships) {
   const nodesByCompanyIndex = _.groupBy(nodes, "event.company.index");
-  const companyIndices = determineCompanyIndexOrder(relationships);
+  const companyIndices = Object.keys(nodesByCompanyIndex)
+    .map(Number)
+    .reduce(
+      (array, index) => {
+        if (array.indexOf(index) === -1) {
+          return [...array, index];
+        } else {
+          return array;
+        }
+      },
+      determineCompanyIndexOrder(relationships),
+    );
+
+  console.log("reallyReallyFinalOrder", companyIndices);
 
   return new NodeGroupCollection(
     companyIndices.map((companyIndex, nodeGroupIndex) => {

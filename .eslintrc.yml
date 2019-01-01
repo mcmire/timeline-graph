@@ -37,7 +37,7 @@ rules:
     - { SwitchCase: 1 }
   max-len:
     - error
-    - { code: 80, ignoreComments: true }
+    - { code: 80, ignorePattern: "^\\s*(?:describe|it)", ignoreComments: true }
   no-caller: error
   no-catch-shadow: error
   no-cond-assign:
