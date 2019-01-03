@@ -1,5 +1,5 @@
 import _ from "lodash";
-import applyOrderingRules from "./applyOrderingRules";
+import spliceInto from "./spliceInto";
 import GroupedNode from "./GroupedNode";
 import wrapNodes from "./wrapNodes";
 
@@ -59,6 +59,12 @@ function normalizeOrderingRules(orderingRules) {
   return orderingRules.map(({ type, from, to }) => {
     return (type === "source" ? [from[0], to[0], from[1]] : from.concat(to));
   });
+}
+
+function applyOrderingRules(orderingRules) {
+  return orderingRules.reduce((masterRule, rule) => {
+    return spliceInto(masterRule, rule);
+  }, []);
 }
 
 function determineCompanyIndexOrder(relationships) {
