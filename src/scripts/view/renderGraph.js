@@ -1,8 +1,9 @@
 import * as d3 from "d3";
-import dom from "../dom";
+import addGuidesTo from "./addGuidesTo";
 import addNodeConnectionsTo from "./addNodeConnectionsTo";
 import addTextBoxesTo from "./addTextBoxesTo";
 import addXAxisTo from "./addXAxisTo";
+import dom from "../dom";
 
 export default function renderGraph(view) {
   const wrapper = d3.select(dom.element("div"))
@@ -12,6 +13,7 @@ export default function renderGraph(view) {
     .style("width", view.width)
     .style("height", view.height);
 
+  addGuidesTo(svg, view);
   addNodeConnectionsTo(svg, view);
   addTextBoxesTo(svg, view);
   addXAxisTo(svg, view);

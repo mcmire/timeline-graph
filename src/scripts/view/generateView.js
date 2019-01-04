@@ -5,7 +5,9 @@ import buildMeasuredNodes from "../model/buildMeasuredNodes";
 import buildNodeGroups from "../model/buildNodeGroups";
 import buildNodes from "../model/buildNodes";
 import buildRelationships from "../model/buildRelationships";
+import NodeGroupCollection from "../model/NodeGroupCollection";
 import PositionedGraphNode from "./PositionedGraphNode";
+import PositionedNodeGroup from "./PositionedNodeGroup";
 import wrapNodes from "../model/wrapNodes";
 
 export default function generateView(model) {
@@ -65,18 +67,29 @@ export default function generateView(model) {
     }
   };
 
-  const groupedNodes = _.sortBy(measuredNodeGroups.getAllNodes(), "index");
-  const positionedNodes = wrapNodes({
-    args: { mapToX, mapToY },
-    constructor: PositionedGraphNode,
-    nodes: groupedNodes,
-  });
+  const positionedNodeGroups = new NodeGroupCollection(
+    measuredNodeGroups.map(nodeGroup => {
+      const positionedNodes = wrapNodes({
+        args: { mapToX, mapToY },
+        constructor: PositionedGraphNode,
+        nodes: nodeGroup.nodes,
+      });
+      return new PositionedNodeGroup({
+        companies: nodeGroup.companies,
+        index: nodeGroup.index,
+        nodes: positionedNodes,
+        y: mapToY(nodeGroup.index),
+      });
+    })
+  );
+  const positionedNodes = _.sortBy(positionedNodeGroups.getAllNodes(), "index");
   const relationships = buildRelationships(positionedNodes);
 
   return {
     height: viewHeight,
     mapToX: mapToX,
     mapToY: mapToY,
+    nodeGroups: positionedNodeGroups.toArray(),
     nodes: positionedNodes,
     relationships: relationships,
     width: viewWidth,

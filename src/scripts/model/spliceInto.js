@@ -86,4 +86,3 @@ function arrangeRulesWithin(ranges, alignment) {
 function compact(array) {
   return array.filter(value => value != null);
 }
-

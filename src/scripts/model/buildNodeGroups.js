@@ -1,46 +1,9 @@
 import _ from "lodash";
-import spliceInto from "./spliceInto";
 import GroupedNode from "./GroupedNode";
+import NodeGroup from "./NodeGroup";
+import NodeGroupCollection from "./NodeGroupCollection";
+import spliceInto from "./spliceInto";
 import wrapNodes from "./wrapNodes";
-
-class NodeGroup {
-  constructor({ companies, nodes, index }) {
-    this.companies = companies;
-    this.nodes = nodes;
-    this.index = index;
-    this.height = _.max(_.map(this.nodes, "height"));
-  }
-
-  toArray() {
-    return this.nodes;
-  }
-}
-
-class NodeGroupCollection {
-  constructor(nodeGroups) {
-    this.nodeGroups = nodeGroups;
-    this.length = nodeGroups.length;
-  }
-
-  at(index) {
-    return this.nodeGroups[index];
-  }
-
-  get last() {
-    return this.nodeGroups[this.nodeGroups.length - 1];
-  }
-
-  reduce(fn, initial) {
-    return this.nodeGroups.reduce(fn, initial);
-  }
-
-  getAllNodes() {
-    return _.sortBy(
-      _.flatMap(this.nodeGroups, nodeGroup => nodeGroup.toArray()),
-      "index"
-    );
-  }
-}
 
 function generateInitialOrderingRulesFrom(relationships) {
   return relationships.reduce((array, rel) => {
@@ -69,9 +32,9 @@ function applyOrderingRules(orderingRules) {
 
 function determineCompanyIndexOrder(relationships) {
   const initialOrderingRules = generateInitialOrderingRulesFrom(relationships);
-  console.log("initialOrderingRules", initialOrderingRules);
+  //console.log("initialOrderingRules", initialOrderingRules);
   const normalizedOrderingRules = normalizeOrderingRules(initialOrderingRules);
-  console.log("normalizedOrderingRules", normalizedOrderingRules);
+  //console.log("normalizedOrderingRules", normalizedOrderingRules);
   const appliedOrderingRules = applyOrderingRules(normalizedOrderingRules);
   return appliedOrderingRules;
 }
@@ -91,7 +54,7 @@ export default function buildNodeGroups(companies, nodes, relationships) {
       determineCompanyIndexOrder(relationships),
     );
 
-  console.log("reallyReallyFinalOrder", companyIndices);
+  //console.log("reallyReallyFinalOrder", companyIndices);
 
   return new NodeGroupCollection(
     companyIndices.map((companyIndex, nodeGroupIndex) => {
