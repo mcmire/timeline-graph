@@ -1,4 +1,3 @@
-import _ from "lodash";
 import buildResult from "./buildResult";
 import CompanyCollection from "./CompanyCollection";
 import EventCollection from "./EventCollection";
@@ -19,36 +18,48 @@ function buildEventDate(rawDate) {
   }
 }
 
-export default function buildModel(story) {
-  return story
-    .split(/\n+/)
-    .filter(text => {
-      return !/^#/.exec(text) && !_.isEmpty(text);
-    })
-    .reduce(
-      (model, line) => {
-        const lineMatch = line.match(/^(.+): (.+)$/);
+export default function buildModel(data) {
+  let state = {
+    companies: new CompanyCollection(),
+    descriptionLines: [],
+    events: new EventCollection(),
+    lastThingParsed: null,
+    rawDate: null,
+  };
 
-        if (lineMatch) {
-          const [rawDate, description] = lineMatch.slice(1);
-          const date = buildEventDate(rawDate);
-          const result = buildResult(model.companies, date, description);
+  data.split(/\n/).forEach(line => {
+    if (state.lastThingParsed === "eventDate") {
+      if (/\.( \[.+\])?$/.test(line)) {
+        const description = state.descriptionLines
+          .concat([line.replace(/^[ ]{2}/, "")])
+          .join(" ")
+          .replace(/[ ]+/g, " ");
+        const date = buildEventDate(state.rawDate);
+        const result = buildResult(state.companies, date, description);
 
-          if (result) {
-            return {
-              companies: model.companies.merge(result.companies),
-              events: model.events.merge(result.events),
-            };
-          } else {
-            throw new Error(`Couldn't build result from "${line}"`);
-          }
+        if (result != null) {
+          state.lastThingParsed = "eventDescription";
+          state.rawDate = null;
+          state.descriptionLines = [];
+          state.companies = state.companies.merge(result.companies);
+          state.events = state.events.merge(result.events);
         } else {
-          return model;
+          throw new Error(`Couldn't interpret "${description}"`);
         }
-      },
-      {
-        companies: new CompanyCollection(),
-        events: new EventCollection(),
+      } else if (/^[ ]{2}/.test(line)) {
+        state.descriptionLines.push(line.replace(/^[ ]{2}/, ""));
+      } else {
+        throw new Error(`Couldn't figure out what to do with "${line}"`);
       }
-    );
+    } else {
+      const match = line.match(/^([^/].+):$/);
+
+      if (match != null) {
+        state.lastThingParsed = "eventDate";
+        state.rawDate = match[1];
+      }
+    }
+  });
+
+  return { companies: state.companies, events: state.events };
 }
