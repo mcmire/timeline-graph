@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { defaultHeight, margin, verticalSpacing, viewWidth } from "../config";
+import { defaultHeight, margin, verticalSpacing, yearWidth } from "../config";
 import _ from "lodash";
 import buildMeasuredNodes from "../model/buildMeasuredNodes";
 import buildNodeGroups from "../model/buildNodeGroups";
@@ -26,10 +26,15 @@ export default function generateView(model) {
   const rightmostMeasuredNode =
     measuredNodesSortedByEffectiveX[measuredNodesSortedByEffectiveX.length - 1];
   const virtualXs = measuredNodes.map(node => node.event.date.value);
-  const maxX = viewWidth - margin.right - rightmostMeasuredNode.width;
+  const years = _.uniq(nodes.map(node => node.event.date.value.getFullYear()));
+  const xRange = {
+    beginning: margin.left,
+    end: margin.left + yearWidth * years.length,
+  };
+  const viewWidth = xRange.end + rightmostMeasuredNode.width + margin.right;
   const mapToX = d3.scaleTime()
     .domain([d3.min(virtualXs), d3.max(virtualXs)])
-    .range([margin.left, maxX]);
+    .range([xRange.beginning, xRange.end]);
 
   const realYsByNodeGroupIndex = measuredNodeGroups.reduce(
     (object, nodeGroup, i) => {
