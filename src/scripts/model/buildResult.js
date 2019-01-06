@@ -1,7 +1,9 @@
 import _ from "lodash";
 
 const newCompanyRegex =
-  "(?:[Tt]he )?(.+? Company(?: of Canada|, Inc\\.)?)(?: \\((.+?)\\))?";
+  "(?:[Tt]he )?" +
+  "(.+? Company(?: of Canada|, Inc\\.)?|.+? (?:Corporation|Company) of .+?)" +
+  "(?: \\((.+?)\\))?";
 
 function buildCompanyRegex(companies) {
   if (companies.size() > 0) {
@@ -104,7 +106,35 @@ function buildTransferResultFrom(companies, date, text) {
   }
 }
 
-function buildAcquisitionResultFrom (companies, date, text) {
+function buildRenameResultFrom(companies, date, text) {
+  const companyRegex = buildCompanyRegex(companies);
+  const match = text.match(
+    `^${companyRegex} is bought out by (.+), becoming ${newCompanyRegex}\\.`
+  );
+
+  if (match) {
+    const oldCompany = companies.find(match[1]);
+    const buyer = match[2];
+    const [newCompanies, newCompany] = companies.create({
+      aliases: [match[4]],
+      index: oldCompany.index,
+      name: match[3],
+    });
+    const events = [
+      {
+        company: newCompany,
+        data: { buyer, oldCompany },
+        date: date,
+        type: "rename",
+      },
+    ];
+    return { companies: newCompanies, events: events };
+  } else {
+    return null;
+  }
+}
+
+function buildAcquisitionResultFrom(companies, date, text) {
   const companyRegex = buildCompanyRegex(companies);
   const match = text.match(`^${companyRegex} acquires ${companyRegex}\\.$`);
 
@@ -213,6 +243,54 @@ function buildReleaseResultFrom(companies, date, text) {
   }
 }
 
+function buildControllingInterestPurchaseResultFrom(companies, date, text) {
+  const companyRegex = buildCompanyRegex(companies);
+  const regexp = new RegExp(
+    `^${companyRegex} purchases a controlling interest in ${companyRegex}\\.$`
+  );
+  const match = text.match(regexp);
+
+  if (match) {
+    const company = companies.find(match[1]);
+    const providingCompany = companies.find(match[2]);
+    const events = [
+      {
+        company: company,
+        data: { providingCompany },
+        date: date,
+        type: "controllingInterestPurchase",
+      },
+    ];
+    return { companies, events };
+  } else {
+    return null;
+  }
+}
+
+function buildShareDivestureResultFrom(companies, date, text) {
+  const companyRegex = buildCompanyRegex(companies);
+  const regexp = new RegExp(
+    `^${companyRegex} divests its shares of ${companyRegex}\\.$`
+  );
+  const match = text.match(regexp);
+
+  if (match) {
+    const company = companies.find(match[1]);
+    const receivingCompany = companies.find(match[2]);
+    const events = [
+      {
+        company: company,
+        data: { receivingCompany },
+        date: date,
+        type: "shareDivesture",
+      },
+    ];
+    return { companies, events };
+  } else {
+    return null;
+  }
+}
+
 export default function buildResult(companies, date, text) {
   return buildIncorporationResultFrom(companies, date, text) ||
     buildJointVentureResultFrom(companies, date, text) ||
@@ -220,5 +298,8 @@ export default function buildResult(companies, date, text) {
     buildAcquisitionResultFrom(companies, date, text) ||
     buildMergerResultFrom(companies, date, text) ||
     buildSpinoffResultFrom(companies, date, text) ||
-    buildReleaseResultFrom(companies, date, text);
+    buildReleaseResultFrom(companies, date, text) ||
+    buildControllingInterestPurchaseResultFrom(companies, date, text) ||
+    buildShareDivestureResultFrom(companies, date, text) ||
+    buildRenameResultFrom(companies, date, text);
 }

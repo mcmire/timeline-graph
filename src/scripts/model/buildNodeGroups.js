@@ -6,6 +6,8 @@ import spliceInto from "./spliceInto";
 import wrapNodes from "./wrapNodes";
 
 function generateInitialOrderingRulesFrom(relationships) {
+  //console.log("relationships", relationships);
+
   return relationships.reduce((array, rel) => {
     const from = _.map(rel.from, "event.company.index");
     const to = _.map(rel.to, "event.company.index");
@@ -20,7 +22,11 @@ function generateInitialOrderingRulesFrom(relationships) {
 
 function normalizeOrderingRules(orderingRules) {
   return orderingRules.map(({ type, from, to }) => {
-    return (type === "source" ? [from[0], to[0], from[1]] : from.concat(to));
+    if (type === "source") {
+      return [from[0], to[0], from[1]];
+    } else {
+      return from.concat(to);
+    }
   });
 }
 
@@ -36,6 +42,7 @@ function determineCompanyIndexOrder(relationships) {
   const normalizedOrderingRules = normalizeOrderingRules(initialOrderingRules);
   //console.log("normalizedOrderingRules", normalizedOrderingRules);
   const appliedOrderingRules = applyOrderingRules(normalizedOrderingRules);
+  //console.log("appliedOrderingRules", appliedOrderingRules);
   return appliedOrderingRules;
 }
 

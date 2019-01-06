@@ -31,7 +31,10 @@ export default function generateView(model) {
     beginning: margin.left,
     end: margin.left + yearWidth * years.length,
   };
-  const viewWidth = xRange.end + rightmostMeasuredNode.width + margin.right;
+  const viewWidth =
+    xRange.end +
+    (years.length > 1 ? rightmostMeasuredNode.width : 0) +
+    margin.right;
   const mapToX = d3.scaleTime()
     .domain([d3.min(virtualXs), d3.max(virtualXs)])
     .range([xRange.beginning, xRange.end]);

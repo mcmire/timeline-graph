@@ -59,8 +59,8 @@ export default function buildNodeGraph(nodes) {
     } else if (
       event.type !== "incorporation" &&
       event.type !== "spinoff" &&
-      event.type !== "jointVenture" &&
-      event.type !== "transfer"
+      event.type !== "transfer" &&
+      event.type !== "rename"
     ) {
       addRelationship({
         from: [node],
@@ -69,7 +69,7 @@ export default function buildNodeGraph(nodes) {
       });
     }
 
-    if (event.type === "transfer") {
+    if (event.type === "transfer" || event.type === "rename") {
       addRelationship({
         from: [node],
         to: [lastOccurringNodesByCompany.fetch(event.data.oldCompany)],
@@ -91,8 +91,27 @@ export default function buildNodeGraph(nodes) {
       });
     }
 
+    if (event.data.providingCompany != null) {
+      addRelationship({
+        from: [lastOccurringNodesByCompany.fetch(event.data.providingCompany)],
+        to: [node],
+        type: "acquired",
+      });
+    } else if (event.data.receivingCompany != null) {
+      addRelationship({
+        from: [node],
+        to: [
+          lastOccurringNodesByCompany.fetch(company),
+          lastOccurringNodesByCompany.fetch(event.data.receivingCompany),
+        ],
+        type: "divesture",
+      });
+    }
+
     lastOccurringNodesByCompany.set(company, node);
   });
+
+  //console.log("relationships", relationships);
 
   return relationships;
 }

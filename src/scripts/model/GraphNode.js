@@ -5,7 +5,7 @@ export default class GraphNode {
     this.event = event;
     this.index = index;
 
-    //this.company = this.event.company;
+    this.companyIndex = this.event.company.index;
     this.id = nanoid();
   }
 

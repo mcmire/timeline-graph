@@ -1,3 +1,4 @@
+import _ from "lodash";
 import buildResult from "./buildResult";
 import CompanyCollection from "./CompanyCollection";
 import EventCollection from "./EventCollection";
@@ -27,13 +28,21 @@ export default function buildModel(data) {
     rawDate: null,
   };
 
-  data.split(/\n/).forEach(line => {
-    if (state.lastThingParsed === "eventDate") {
-      if (/\.( \[.+\])?$/.test(line)) {
+  _.forEach(data.split(/\n/), line => {
+    const strippedLine = line.replace(/[ ]+$/, "");
+
+    if (strippedLine === "STOP") {
+      return false;
+    }
+
+    if (/^#/.test(strippedLine) || strippedLine === "") {
+      // thank u, next
+    } else if (state.lastThingParsed === "eventDate") {
+      if (/\.([ ]+\[.+?\])?$/.test(strippedLine)) {
         const description = state.descriptionLines
-          .concat([line.replace(/^[ ]{2}/, "")])
+          .concat([strippedLine.replace(/^[ ]{2}/, "")])
           .join(" ")
-          .replace(/[ ]+/g, " ");
+          .replace(/[ ]+\[.+?\]/g, "");
         const date = buildEventDate(state.rawDate);
         const result = buildResult(state.companies, date, description);
 
@@ -46,13 +55,17 @@ export default function buildModel(data) {
         } else {
           throw new Error(`Couldn't interpret "${description}"`);
         }
-      } else if (/^[ ]{2}/.test(line)) {
-        state.descriptionLines.push(line.replace(/^[ ]{2}/, ""));
+      } else if (/^[ ]{2}/.test(strippedLine)) {
+        state.descriptionLines.push(
+          strippedLine.replace(/^[ ]{2}/, "")
+        );
       } else {
-        throw new Error(`Couldn't figure out what to do with "${line}"`);
+        throw new Error(
+          `Couldn't figure out what to do with "${strippedLine}"`
+        );
       }
     } else {
-      const match = line.match(/^([^/].+):$/);
+      const match = strippedLine.match(/^([^/].+):$/);
 
       if (match != null) {
         state.lastThingParsed = "eventDate";

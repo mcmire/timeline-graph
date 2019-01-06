@@ -14,8 +14,9 @@ class CompanyCollection {
     Object.defineProperty(
       this,
       lastIndexSymbol,
-      { enumerable: false, value: lastIndex, writable: true }
+      { enumerable: false, value: lastIndex, writable: false }
     );
+    this.lastIndex = lastIndex;
   }
 
   findAllByIndex(index) {
@@ -48,13 +49,9 @@ class CompanyCollection {
   }
 
   merge(companyCollection) {
-    const newCompanyCollection = this.constructor.wrap(companyCollection);
-
-    return _.reduce(
-      newCompanyCollection[entriesSymbol],
-      (newCompanies, company) => newCompanies.add(company),
-      this.clone()
-    );
+    return companyCollection.reduce((newCompanies, company) => {
+      return newCompanies.add(company);
+    }, this.cloneWith({ lastIndex: companyCollection[lastIndexSymbol] }));
   }
 
   find(...names) {
@@ -90,9 +87,9 @@ class CompanyCollection {
 
       if (foundCompany == null) {
         const newIndex = (
-          rest.index == null ?
-            this[lastIndexSymbol] + 1 :
-            rest.index
+          rest.index != null ?
+            rest.index :
+            this[lastIndexSymbol] + 1
         );
         const newCompany = new Company({
           aliases: definiteNames.slice(1),
@@ -102,9 +99,14 @@ class CompanyCollection {
         const newEntries = definiteNames.reduce((entries, n) => {
           return { ...entries, [n]: newCompany };
         }, _.clone(this[entriesSymbol]));
+        const lastIndex = (
+          newIndex >= this[lastIndexSymbol] ?
+            newIndex :
+            this[lastIndexSymbol]
+        );
         const newCompanies = this.cloneWith({
           entries: newEntries,
-          lastIndex: newIndex,
+          lastIndex: lastIndex,
         });
         return [newCompanies, newCompany];
       } else {
@@ -167,7 +169,7 @@ class CompanyCollection {
       const newEntries = names.reduce((object, name) => {
         return { ...object, [name]: company };
       }, entries);
-      return this.cloneWith({ entries: newEntries, lastIndex: company.index });
+      return this.cloneWith({ entries: newEntries });
     } else {
       return this;
     }

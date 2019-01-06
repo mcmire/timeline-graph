@@ -16,6 +16,7 @@ export default function appendLinesTo(
   element,
   {
     points,
+    color = "black",
     dashed = false,
     withArrowhead = false,
   }
@@ -24,7 +25,7 @@ export default function appendLinesTo(
     .append("polyline")
     .attr("fill", "none")
     .attr("stroke-width", "1px")
-    .attr("stroke", "black")
+    .attr("stroke", color)
     .attr("stroke-dasharray", dashed ? 4 : null)
     .attr("points", points.map(({x, y}) => [x, y].join(",")).join(" "));
 
