@@ -6,7 +6,11 @@
   "scripts": {
     "start": "parcel src/index.html --out-dir=tmp",
     "build": "parcel build src/index.html --out-dir=dist --public-url='./'",
-    "watch-tests": "jest --watch"
+    "watch-tests": "jest --watch",
+    "debug-tests": "node --inspect-brk node_modules/.bin/jest --runInBand"
+  },
+  "engines": {
+    "node": "11.x"
   },
   "keywords": [],
   "author": "Elliot Winkler <elliot.winkler@gmail.com>",
