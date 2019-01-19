@@ -2,7 +2,7 @@ import _ from "lodash";
 import GroupedNode from "./GroupedNode";
 import NodeGroup from "./NodeGroup";
 import NodeGroupCollection from "./NodeGroupCollection";
-import spliceInto from "./spliceInto";
+import RuleTree, { RuleTreeError } from "./RuleTree";
 import wrapNodes from "./wrapNodes";
 
 function generateInitialOrderingRulesFrom(relationships) {
@@ -21,19 +21,36 @@ function generateInitialOrderingRulesFrom(relationships) {
 }
 
 function normalizeOrderingRules(orderingRules) {
-  return orderingRules.map(({ type, from, to }) => {
-    if (type === "source") {
-      return [from[0], to[0], from[1]];
-    } else {
-      return from.concat(to);
-    }
-  });
+  return _.sortBy(
+    orderingRules.map(({ type, from, to }) => {
+      if (type === "source") {
+        return [from[0], to[0], from[1]];
+      } else {
+        return from.concat(to);
+      }
+    }),
+    (rule) => rule[0]
+  );
 }
 
-function applyOrderingRules(orderingRules) {
-  return orderingRules.reduce((masterRule, rule) => {
-    return spliceInto(masterRule, rule);
-  }, []);
+function applyOrderingRules(ruleChains) {
+  const combinedRuleTree = ruleChains.reduce((ruleTree, ruleChain) => {
+    //console.log("ruleTree", JSON.stringify(ruleTree.toDeepArray()));
+    //console.log("ruleChain", ruleChain);
+    try {
+      return ruleTree.mergedWith(ruleChain);
+    } catch (error) {
+      if (error instanceof RuleTreeError) {
+        console.error("Couldn't apply", ruleChain);
+        // Don't worry about it
+        return ruleTree;
+      } else {
+        throw error;
+      }
+    }
+  }, new RuleTree());
+
+  return combinedRuleTree.flattened();
 }
 
 function determineCompanyIndexOrder(relationships) {
