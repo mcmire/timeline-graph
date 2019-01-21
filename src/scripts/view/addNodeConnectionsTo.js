@@ -42,9 +42,15 @@ export default function addNodeConnectionsTo(svg, view) {
             groupElement,
             { x: x, y: rel.from[0].bounds.halfY },
           );
-          /*
-          }
-          */
+        } else if (rel.from[0].bounds.x2 > (rel.to[0].bounds.x2 - 30)) {
+          appendLinesTo(groupElement, {
+            dashed: true,
+            points: [
+              { x: rel.from[0].bounds.halfX, y: rel.from[0].bounds.y2 },
+              { x: rel.to[0].bounds.halfX, y: rel.to[0].bounds.y1 },
+            ],
+            withArrowhead: true,
+          });
         } else if (rel.from[0].bounds.x2 > rel.to[0].bounds.x1) {
           const jut = 30;
           const x = Math.min(

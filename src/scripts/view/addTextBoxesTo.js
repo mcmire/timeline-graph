@@ -15,7 +15,7 @@ export default function addTextBoxesTo(svg, view) {
       groupElement.append("rect")
         .attr("stroke", "black")
         .attr("stroke-width", "1px")
-        .attr("fill", "white")
+        .attr("fill", "rgba(255,255,255)")
         .attr("x", node.x + 0.5)
         .attr("y", node.adjustedY + 0.5)
         .attr("width", `${node.width}px`)
