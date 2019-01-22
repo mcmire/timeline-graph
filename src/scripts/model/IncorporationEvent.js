@@ -8,8 +8,8 @@ export default class IncorporationEvent extends Event {
       description += ` by ${this.data.founder}`;
     }
 
-    if (this.data.parentCompany != null) {
-      description += ` as subsidiary of ${this.data.parentCompany.name}`;
+    if (this.data.parentCompanies.length > 0) {
+      description += ` as subsidiary of ${this.data.parentCompanies[0].name}`;
     }
 
     return description;

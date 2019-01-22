@@ -1,8 +1,8 @@
+import RuleTree, { RuleTreeError } from "./RuleTree";
 import _ from "lodash";
 import GroupedNode from "./GroupedNode";
 import NodeGroup from "./NodeGroup";
 import NodeGroupCollection from "./NodeGroupCollection";
-import RuleTree, { RuleTreeError } from "./RuleTree";
 import wrapNodes from "./wrapNodes";
 
 function generateInitialOrderingRulesFrom(relationships) {
@@ -23,7 +23,7 @@ function generateInitialOrderingRulesFrom(relationships) {
 function normalizeOrderingRules(orderingRules) {
   return _.sortBy(
     orderingRules.map(({ type, from, to }) => {
-      if (type === "source") {
+      if (type === "source" && from.length > 1) {
         return [from[0], to[0], from[1]];
       } else {
         return from.concat(to);

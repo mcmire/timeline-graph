@@ -8,6 +8,12 @@
 # 7. https://en.wikipedia.org/wiki/RCA
 # 8. https://en.wikipedia.org/wiki/General_Electric
 # 9. https://en.wikipedia.org/wiki/Thomson-Houston_Electric_Company
+# 10. https://en.wikipedia.org/wiki/Bell_Labs
+# 11. http://www.encyclopedia.chicagohistory.org/pages/2715.html
+# 12. https://www.chipublib.org/blogs/post/technology-that-changed-chicago-telephones-1877-1892/
+# 13. http://www.fundinguniverse.com/company-histories/illinois-bell-telephone-company-history/
+# 14. http://www.classicrotaryphones.com/forum/index.php?topic=9487.0
+# 15. https://en.wikipedia.org/wiki/Breakup_of_the_Bell_System
 
 1846?:
   The Erie and Michigan Telegraph Company is formed.
@@ -26,6 +32,11 @@ December 1877:
   The American Speaking Telephone Company is formed.
 February 12, 1878:
   The New England Telephone and Telegraph Company is founded.
+June 26, 1878:
+  The Chicago Telephonic Exchange is founded. [13, 14]
+1878:
+  The Bell Telephone Company of Illinois is founded as a subsidiary of Bell.
+  [11]
 // 1879:
   The International Bell Telephone Company (IBTC) is founded by Gardiner Hubbard
   as a subsidiary of the Bell Telephone Company.
@@ -47,6 +58,9 @@ April 17, 1880:
   Bell.
 1881:
   Bell acquires Western Electric Manufacturing.
+1881:
+  The Chicago Telephonic Exchange merges with the Bell Telephone Company of
+  Illinois to form the Chicago Telephone Company. [11, 13]
 // April 26, 1882:
   The Bell Telephone Manufacturing Company (BTMC) is formed as a joint venture
   between IBTC and Western Electric Manufacturing.
@@ -56,6 +70,9 @@ April 17, 1880:
 April 24, 1889:
   The Edison General Electric Company is founded [from Edison's multiple
   electric companies]. [8]
+1896:
+  The Western Electric Engineering Department is created as a division of
+  Western Electric Manufacturing [located at 463 West Street, New York]. [10]
 December 30, 1899:
   AT&T acquires American Bell.
 1892:
@@ -67,15 +84,27 @@ December 30, 1899:
 December 19, 1913:
   AT&T divests its shares of Western Union [as a part of the Kingsbury
   Commitment]. [4]
-/ 1915:
+1915:
   Western Electric Manufacturing is re-established as Western Electric Company,
   Inc. (Western Electric), a subsidiary of AT&T.
 November 20, 1919:
   The Radio Corporation of America (RCA) is founded as a subsidiary of GE. [7]
+1920:
+  The Chicago Telephone Company is re-established as the Illinois Bell Telephone
+  Company (Illinois Bell), a subsidiary of AT&T [?]. [13]
+1925:
+  The Western Electric Engineering Department is reorganized into Bell Telephone
+  Laboratories (Bell Labs), a joint venture between AT&T and Western Electric
+  [moves to present-day location in Murray Hill, New Jersey in 1967]. [10]
 May 11, 1926:
   The Broadcasting Company of America (BCA) is founded as a subsidiary of AT&T.
   [6]
 July 1, 1926:
   RCA acquires BCA [for $1 million]. [6]
+January 1, 1984:
+  American Information Technologies Corporation (Ameritech) is created [as a
+  holding company]. [15]
+January 1, 1984:
+  Illinois Bell is transferred to Ameritech.
 / July 4, 1990:
   AT&T buys Western Union's email and Telex businesses. [5]

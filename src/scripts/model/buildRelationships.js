@@ -1,3 +1,9 @@
+import { isEqual, uniq } from "lodash";
+
+function hasDuplicateIndices(indices) {
+  return !isEqual(uniq(indices), indices);
+}
+
 class Relationship {
   constructor({ from, to, type }) {
     if (from == null) {
@@ -9,7 +15,21 @@ class Relationship {
     }
 
     if (type == null) {
-      throw new Error(`${this.constructor.type}: No type given`);
+      throw new Error(`${this.constructor.name}: No type given`);
+    }
+
+    if (hasDuplicateIndices(from)) {
+      throw new Error(`${this.constructor.name}: Duplicate indices in from`);
+    }
+
+    if (hasDuplicateIndices(to)) {
+      throw new Error(`${this.constructor.name}: Duplicate indices in to`);
+    }
+
+    if (hasDuplicateIndices(from.concat(to))) {
+      throw new Error(
+        `${this.constructor.name}: Some indices in from are repeated in to`
+      );
     }
 
     this.from = from;
@@ -57,10 +77,12 @@ export default function buildNodeGraph(nodes) {
         type: "source",
       });
     } else if (
+      event.type !== "buyout" &&
+      event.type !== "formation" &&
       event.type !== "incorporation" &&
-      event.type !== "spinoff" &&
-      event.type !== "transfer" &&
-      event.type !== "rename"
+      event.type !== "reestablishment" &&
+      event.type !== "rename" &&
+      event.type !== "spinoff"
     ) {
       addRelationship({
         from: [node],
@@ -69,7 +91,11 @@ export default function buildNodeGraph(nodes) {
       });
     }
 
-    if (event.type === "transfer" || event.type === "rename") {
+    if (
+      event.type === "buyout" ||
+      event.type === "reestablishment" ||
+      event.type === "rename"
+    ) {
       addRelationship({
         from: [node],
         to: [lastOccurringNodesByCompany.fetch(event.data.oldCompany)],
@@ -77,15 +103,25 @@ export default function buildNodeGraph(nodes) {
       });
     }
 
-    if (event.data.childCompany != null) {
+    if (event.type === "transfer") {
+      addRelationship({
+        from: [node],
+        to: [
+          lastOccurringNodesByCompany.fetch(event.data.parentCompany),
+        ],
+        type: "parent",
+      });
+    } else if (event.data.childCompany != null) {
       addRelationship({
         from: [lastOccurringNodesByCompany.fetch(event.data.childCompany)],
         to: [node],
         type: "acquired",
       });
-    } else if (event.data.parentCompany != null) {
+    } else if (event.data.parentCompanies != null) {
       addRelationship({
-        from: [lastOccurringNodesByCompany.fetch(event.data.parentCompany)],
+        from: event.data.parentCompanies.map(parentCompany => {
+          return lastOccurringNodesByCompany.fetch(parentCompany);
+        }),
         to: [node],
         type: "parent",
       });
