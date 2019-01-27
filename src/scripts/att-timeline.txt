@@ -20,6 +20,7 @@
 # 19. http://www.fundinguniverse.com/company-histories/at-t-bell-laboratories-inc-history/
 # 20. https://www.bell-labs.com/about/history-bell-labs/
 # 21. https://en.wikipedia.org/wiki/Telcordia_Technologies
+# 22. https://ethw.org/Lars_Magnus_Ericsson
 
 1846?:
   The Erie and Michigan Telegraph Company is formed.
@@ -34,7 +35,7 @@
   The Western Electric Manufacturing Company (Western Electric Manufacturing) is
   founded by Enos M. Barton and Elisha Gray.
 1876:
-  Ericsson is founded.
+  L.M. Ericsson & Company (Ericsson) is founded. [22]
 July 9, 1877:
   The Bell Telephone Company (Bell) is founded by Gardiner Hubbard.
 December 1877:
